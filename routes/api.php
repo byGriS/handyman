@@ -14,6 +14,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->get('user', function (Request $request) {
+  return $request->user();
+});
+
+Route::namespace('Api')->group(function () {
+  Route::get('getlistusers', 'ApiUserController@getListUsers');
+  Route::post('resetPass', 'ApiUserController@resetPass');
+  Route::post('deleteUser', 'ApiUserController@deleteUser');
+  Route::post('addUser', 'ApiUserController@addUser');
+
+  Route::get('getListWorks', 'ApiWorkController@getListWorks');
+  Route::get('getListTasks', 'ApiWorkController@getListTasks');
+  Route::get('getListTasksByUser', 'ApiWorkController@getListTasksByUser');
+  
+  Route::post('addNote', 'ApiNoteController@add');
 });
