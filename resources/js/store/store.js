@@ -8,5 +8,6 @@ export default new Vuex.Store({
     userRole: 0,
     userApi: "",
     host: "http://handyman.loc/",
+    //host: "http://fh7929y8.bget.ru/handyman/",
   }
 })

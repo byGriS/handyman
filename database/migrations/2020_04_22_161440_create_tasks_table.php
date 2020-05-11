@@ -19,8 +19,9 @@ class CreateTasksTable extends Migration
             $table->float('capacity');
             $table->date('end');
             $table->float('standartPeople');//чел/сут/м3
-            $table->float('standartConsumption');//м3/м3 или м3/м2
-            $table->boolean('status');    
+            $table->float('standartConsumption');//м3/м3 или м3/м2 раствор/кладка
+            $table->integer('holiday');
+            $table->boolean('status')->default(1);    
 
             $table->foreignId('work_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');

@@ -4,3 +4,15 @@
 .vAlign{
   margin: auto;
 }
+.marginT15{
+  margin-top: 15px;
+}
+.marginR15{
+  margin-right: 15px;
+}
+label{
+  margin: 0;
+}
+.width50{
+  width: 50px;
+}

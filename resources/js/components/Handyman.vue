@@ -1,6 +1,7 @@
 <template>
   <div class="handymanWrap">
-    <div class="row">
+    <div v-if="notActive">Активных работ нет</div>
+    <div v-else class="row">
       <div class="col-md-2 text-center vAlign">Список объектов</div>
       <div class="col-md-2">
         <select class="form-control" v-model="selectedTask">
@@ -9,7 +10,12 @@
       </div>
       <div class="col-md-8"></div>
     </div>
-    <Task v-if="selectedTask != null" :work="selectedTask.work" :task="selectedTask" :isAdmin="false"/>
+    <Task
+      v-if="selectedTask != null"
+      :work="selectedTask.work"
+      :task="selectedTask"
+      :isAdmin="false"
+    />
   </div>
 </template>
 
@@ -21,7 +27,8 @@ export default {
   data() {
     return {
       tasks: [],
-      selectedTask: null
+      selectedTask: null,
+      notActive: false
     };
   },
   methods: {
@@ -32,9 +39,11 @@ export default {
             api_token: this.$store.state.userApi
           }
         })
-        .then(function(response) {
+        .then(function (response) {
           this.tasks = response.data;
           if (this.tasks.length > 0) this.selectedTask = this.tasks[0];
+          else
+            this.notActive = true;
         });
     }
   },

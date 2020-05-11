@@ -61,4 +61,9 @@ class ApiUserController extends ApiController
     $user->save();
     return "1";
   }
+
+  public function getListHandymans(){
+    $handymans = User::where('role', 3)->get();
+    return $handymans;
+  }
 }
