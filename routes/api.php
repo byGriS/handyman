@@ -38,6 +38,9 @@ Route::namespace('Api')->group(function () {
   Route::post('deleteWork', 'ApiWorkController@deleteWork');
   Route::post('completeTask', 'ApiWorkController@completeTask');
   Route::post('completeWork', 'ApiWorkController@completeWork');
+  Route::get('getCompletedWorks','ApiWorkController@getCompletedWorks');
+  Route::post('restoreWork', 'ApiWorkController@restoreWork');
+  Route::post('restoreTask', 'ApiWorkController@restoreTask');
 
   Route::post('addNote', 'ApiNoteController@add');
   Route::post('changeNotePeople', 'ApiNoteController@changeNotePeople');

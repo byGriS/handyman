@@ -3,9 +3,9 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
-import Admin from '../components/Admin'
 import Users from '../components/Users'
 import Works from '../components/Works'
+import CompletedWorks from '../components/completedWorks'
 
 export default new VueRouter({
   mode: 'history',
@@ -14,6 +14,11 @@ export default new VueRouter({
       path: '/',
       name: 'works',
       component: Works,
+    },   
+    {
+      path: '/complete',
+      name: 'completedWorks',
+      component: CompletedWorks,
     },
     {
       path: '/users',

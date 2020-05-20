@@ -1,149 +1,162 @@
 <template>
   <div class="taskWrap">
-    <div class="d-flex justify-content-between">
-      <h3>{{task.work.name}}</h3>
+    <div v-if="task.status == 2">
+      <div class="row">
+        <div class="col-md-2 vAlign">{{task.work.name}}</div>
+        <div class="col-md-2 vAlign text-center">{{task.user.name}}</div>
+        <div class="col-md-2 vAlign text-center">{{task.capacity}}</div>
+        <div class="col-md-2 vAlign text-center">{{task.updated_at}}</div>
+        <div class="col-md-4 text-center">
+          <button class="btn btn-primary" @click="restoreTask(task.id)">Восстановить работу</button>
+        </div>
+      </div>
+    </div>
+    <div v-else>
+      <div class="d-flex justify-content-between">
+        <h3>{{task.work.name}}</h3>
+        <div>
+          <button
+            v-if="isAdmin && isFull"
+            class="btn btn-success"
+            @click="completeTask()"
+          >Завершить работу</button>
+          <button v-if="isAdmin" class="btn btn-danger" @click="deleteTask()">Удалить работу</button>
+        </div>
+      </div>
+      <div class="row lineData">
+        <div class="col-md-3">Исполнитель</div>
+        <div class="col-md-3">{{task.user.name}}</div>
+        <div class="col-md-3">Тип работ</div>
+        <div class="col-md-3">{{typeWork}}</div>
+      </div>
+
+      <div class="row lineData">
+        <div class="col-md-3">Необходимый объем работ</div>
+        <div v-if="isEditCapacity" class="col-md-3 d-flex dataHover">
+          <input class="form-control" v-model="task.capacity" />
+          <button class="btn btn-primary" @click="editCapacity()">Ок</button>
+        </div>
+        <div v-else class="col-md-3 d-flex dataHover">
+          <div class="flex-grow-1">{{task.capacity}}</div>
+          <div v-if="isAdmin" @click="editCapacity()">
+            <BtnEdit />
+          </div>
+        </div>
+        <div class="col-md-3">Выполненный объем работ</div>
+        <div class="col-md-3">{{completedWork}}</div>
+      </div>
+
+      <div class="row lineData">
+        <div class="col-md-3">Срок выполнения работ</div>
+        <div v-if="isEditEnd" class="col-md-3 d-flex dataHover">
+          <input class="form-control" v-model="task.end" />
+          <button class="btn btn-primary" @click="editEnd()">Ок</button>
+        </div>
+        <div v-else class="col-md-3 d-flex dataHover">
+          <div class="flex-grow-1">{{task.end}}</div>
+          <div v-if="isAdmin" @click="editEnd()">
+            <BtnEdit />
+          </div>
+        </div>
+        <div class="col-md-3">Расчетная дата окончания работ</div>
+        <div class="col-md-3">{{completedWorkDT}}</div>
+      </div>
+
+      <div v-if="isAdmin" class="row lineData">
+        <div class="col-md-3">Норматив объем работ/чел/сут</div>
+        <div v-if="isEditStandartPeople" class="col-md-3 d-flex dataHover">
+          <input class="form-control" v-model="task.standartPeople" />
+          <button class="btn btn-primary" @click="editStandartPeople()">Ок</button>
+        </div>
+        <div v-else class="col-md-3 d-flex dataHover">
+          <div class="flex-grow-1">{{task.standartPeople}}</div>
+          <div v-if="isAdmin" @click="editStandartPeople()">
+            <BtnEdit />
+          </div>
+        </div>
+        <div class="col-md-6" />
+      </div>
+      <div v-if="isAdmin" class="row lineData">
+        <div class="col-md-3">Норматив раствор/объем работ</div>
+        <div v-if="isEditStandartConsumption" class="col-md-3 d-flex dataHover">
+          <input class="form-control" v-model="task.standartConsumption" />
+          <button class="btn btn-primary" @click="editStandartConsumption()">Ок</button>
+        </div>
+        <div v-else class="col-md-3 d-flex dataHover">
+          <div class="flex-grow-1">{{task.standartConsumption}}</div>
+          <div v-if="isAdmin" @click="editStandartConsumption()">
+            <BtnEdit />
+          </div>
+        </div>
+        <div class="col-md-6" />
+      </div>
+
+      <br />
+
+      <div class="row">
+        <div class="calendarWrap col-md-3">
+          <Calendar v-model="date" :disabledDates="{to:taskStart, from: today}" />
+        </div>
+        <div class="lineData col-md-3">
+          <div v-if="todayNote == null">
+            <label>Кол-во человек:</label>
+            <input class="form-control" v-model="todayPeople" />
+          </div>
+          <div v-else class="d-flex">
+            <div class="flex-grow-1 d-flex">
+              <label class="marginR15">Кол-во человек:</label>
+              <div v-if="!isEditTodayPeople">
+                <label class="marginR15">{{(todayNote != null) ? todayNote.people : ''}}</label>
+              </div>
+              <div v-else>
+                <input class="width50 form-control" v-model="todayNote.people" />
+              </div>
+            </div>
+            <div v-if="isAdmin" @click="editTodayPeople()">
+              <div v-if="!isEditTodayPeople">
+                <BtnEdit />
+              </div>
+              <div v-else>
+                <button class="btn btn-primary">Ок</button>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="todayNote == null">
+            <label>Кол-во раствора:</label>
+            <input class="form-control" v-model="todayConsumption" />
+          </div>
+          <div v-else class="d-flex">
+            <div class="flex-grow-1 d-flex">
+              <label class="marginR15">Кол-во раствора:</label>
+              <div v-if="!isEditTodayConsumption">
+                <label class="marginR15">{{(todayNote != null) ? todayNote.consumption : ''}}</label>
+              </div>
+              <div v-else>
+                <input class="width50 form-control" v-model="todayConsumption" />
+              </div>
+            </div>
+            <div v-if="isAdmin" @click="editTodayConsumption()">
+              <div v-if="!isEditTodayConsumption">
+                <BtnEdit />
+              </div>
+              <div v-else>
+                <button class="btn btn-primary">Ок</button>
+              </div>
+            </div>
+          </div>
+
+          <button
+            v-if="todayNote == null"
+            class="btn btn-primary marginT15"
+            @click="sendNote()"
+          >Отправить данные</button>
+        </div>
+        <div class="col-md-6"></div>
+      </div>
       <div>
-        <button
-          v-if="isAdmin && isFull"
-          class="btn btn-success"
-          @click="completeTask()"
-        >Завершить работу</button>
-        <button v-if="isAdmin" class="btn btn-danger" @click="deleteTask()">Удалить работу</button>
+        <highcharts :options="chartOptions"></highcharts>
       </div>
-    </div>
-    <div class="row lineData">
-      <div class="col-md-3">Исполнитель</div>
-      <div class="col-md-3">{{task.user.name}}</div>
-      <div class="col-md-3">Тип работ</div>
-      <div class="col-md-3">{{typeWork}}</div>
-    </div>
-
-    <div class="row lineData">
-      <div class="col-md-3">Необходимый объем работ</div>
-      <div v-if="isEditCapacity" class="col-md-3 d-flex dataHover">
-        <input class="form-control" v-model="task.capacity" />
-        <button class="btn btn-primary" @click="editCapacity()">Ок</button>
-      </div>
-      <div v-else class="col-md-3 d-flex dataHover">
-        <div class="flex-grow-1">{{task.capacity}}</div>
-        <div v-if="isAdmin" @click="editCapacity()">
-          <BtnEdit />
-        </div>
-      </div>
-      <div class="col-md-3">Выполненный объем работ</div>
-      <div class="col-md-3">{{completedWork}}</div>
-    </div>
-
-    <div class="row lineData">
-      <div class="col-md-3">Срок выполнения работ</div>
-      <div v-if="isEditEnd" class="col-md-3 d-flex dataHover">
-        <input class="form-control" v-model="task.end" />
-        <button class="btn btn-primary" @click="editEnd()">Ок</button>
-      </div>
-      <div v-else class="col-md-3 d-flex dataHover">
-        <div class="flex-grow-1">{{task.end}}</div>
-        <div v-if="isAdmin" @click="editEnd()">
-          <BtnEdit />
-        </div>
-      </div>
-      <div class="col-md-3">Расчетная дата окончания работ</div>
-      <div class="col-md-3">{{completedWorkDT}}</div>
-    </div>
-
-    <div v-if="isAdmin" class="row lineData">
-      <div class="col-md-3">Норматив объем работ/чел/сут</div>
-      <div v-if="isEditStandartPeople" class="col-md-3 d-flex dataHover">
-        <input class="form-control" v-model="task.standartPeople" />
-        <button class="btn btn-primary" @click="editStandartPeople()">Ок</button>
-      </div>
-      <div v-else class="col-md-3 d-flex dataHover">
-        <div class="flex-grow-1">{{task.standartPeople}}</div>
-        <div v-if="isAdmin" @click="editStandartPeople()">
-          <BtnEdit />
-        </div>
-      </div>
-      <div class="col-md-6" />
-    </div>
-    <div v-if="isAdmin" class="row lineData">
-      <div class="col-md-3">Норматив раствор/объем работ</div>
-      <div v-if="isEditStandartConsumption" class="col-md-3 d-flex dataHover">
-        <input class="form-control" v-model="task.standartConsumption" />
-        <button class="btn btn-primary" @click="editStandartConsumption()">Ок</button>
-      </div>
-      <div v-else class="col-md-3 d-flex dataHover">
-        <div class="flex-grow-1">{{task.standartConsumption}}</div>
-        <div v-if="isAdmin" @click="editStandartConsumption()">
-          <BtnEdit />
-        </div>
-      </div>
-      <div class="col-md-6" />
-    </div>
-
-    <br />
-
-    <div class="row">
-      <div class="calendarWrap col-md-3">
-        <Calendar v-model="date" :disabledDates="{to:taskStart, from: today}" />
-      </div>
-      <div class="lineData col-md-3">
-        <div v-if="todayNote == null">
-          <label>Кол-во человек:</label>
-          <input class="form-control" v-model="todayPeople" />
-        </div>
-        <div v-else class="d-flex">
-          <div class="flex-grow-1 d-flex">
-            <label class="marginR15">Кол-во человек:</label>
-            <div v-if="!isEditTodayPeople">
-              <label class="marginR15">{{(todayNote != null) ? todayNote.people : ''}}</label>
-            </div>
-            <div v-else>
-              <input class="width50 form-control" v-model="todayNote.people" />
-            </div>
-          </div>
-          <div v-if="isAdmin" @click="editTodayPeople()">
-            <div v-if="!isEditTodayPeople">
-              <BtnEdit />
-            </div>
-            <div v-else>
-              <button class="btn btn-primary">Ок</button>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="todayNote == null">
-          <label>Кол-во раствора:</label>
-          <input class="form-control" v-model="todayConsumption" />
-        </div>
-        <div v-else class="d-flex">
-          <div class="flex-grow-1 d-flex">
-            <label class="marginR15">Кол-во раствора:</label>
-            <div v-if="!isEditTodayConsumption">
-              <label class="marginR15">{{(todayNote != null) ? todayNote.consumption : ''}}</label>
-            </div>
-            <div v-else>
-              <input class="width50 form-control" v-model="todayConsumption" />
-            </div>
-          </div>
-          <div v-if="isAdmin" @click="editTodayConsumption()">
-            <div v-if="!isEditTodayConsumption">
-              <BtnEdit />
-            </div>
-            <div v-else>
-              <button class="btn btn-primary">Ок</button>
-            </div>
-          </div>
-        </div>
-
-        <button
-          v-if="todayNote == null"
-          class="btn btn-primary marginT15"
-          @click="sendNote()"
-        >Отправить данные</button>
-      </div>
-      <div class="col-md-6"></div>
-    </div>
-    <div>
-      <highcharts :options="chartOptions"></highcharts>
     </div>
   </div>
 </template>
@@ -423,6 +436,16 @@ export default {
         .then(function (response) {
           this.$emit("refresh");
         });
+    },
+    restoreTask(id) {
+      this.$http
+        .post(this.$store.state.host + "api/restoreTask", {
+          api_token: this.$store.state.userApi,
+          id: id
+        })
+        .then(() => {
+          this.$emit("refresh");
+        })
     }
   },
   created() {
@@ -443,6 +466,7 @@ export default {
   border-radius: 10px;
   padding: 12px 20px;
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 .lineData {
   line-height: 30px;

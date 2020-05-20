@@ -1927,6 +1927,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {};
@@ -2379,6 +2384,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2645,6 +2663,16 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         this.$emit("refresh");
       });
+    },
+    restoreTask: function restoreTask(id) {
+      var _this3 = this;
+
+      this.$http.post(this.$store.state.host + "api/restoreTask", {
+        api_token: this.$store.state.userApi,
+        id: id
+      }).then(function () {
+        _this3.$emit("refresh");
+      });
     }
   },
   created: function created() {
@@ -2867,6 +2895,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2876,9 +2912,11 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      isCompleted: false,
       works: [],
       selectedWork: null,
       tasks: [],
+      completedTasks: [],
       isNewTask: false,
       isAddNewWork: false,
       newWorkTitle: ""
@@ -2922,7 +2960,17 @@ __webpack_require__.r(__webpack_exports__);
           work_id: this.selectedWork.id
         }
       }).then(function (response) {
-        this.tasks = response.data;
+        var _this = this;
+
+        this.tasks = [];
+        this.completedTasks = [];
+        response.data.forEach(function (task) {
+          if (task.status == 1) _this.tasks.push(task);else {
+            task.updated_at = task.updated_at.substr(0, 10);
+
+            _this.completedTasks.push(task);
+          }
+        }); //this.tasks = response.data;
       });
     },
     addWork: function addWork() {
@@ -2953,6 +3001,74 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         this.selectedWork = null;
         this.getListWorks();
+      });
+    }
+  },
+  beforeMount: function beforeMount() {
+    this.getListWorks();
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/completedWorks.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/completedWorks.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      works: []
+    };
+  },
+  methods: {
+    getListWorks: function getListWorks() {
+      this.$http.get(this.$store.state.host + "api/getCompletedWorks", {
+        params: {
+          api_token: this.$store.state.userApi
+        }
+      }).then(function (response) {
+        this.works = response.data;
+        this.works.forEach(function (element) {
+          element.updated_at = element.updated_at.substr(0, 10);
+        });
+      });
+    },
+    restoreWork: function restoreWork(workId) {
+      var _this = this;
+
+      this.$http.post(this.$store.state.host + "api/restoreWork", {
+        api_token: this.$store.state.userApi,
+        id: workId
+      }).then(function () {
+        _this.getListWorks();
       });
     }
   },
@@ -7582,7 +7698,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.taskWrap[data-v-e9a53c20] {\r\n  background: rgb(255, 255, 255);\r\n  border: 1px solid rgb(240, 239, 239);\r\n  border-radius: 10px;\r\n  padding: 12px 20px;\r\n  margin-top: 10px;\n}\n.lineData[data-v-e9a53c20] {\r\n  line-height: 30px;\n}\n.lineData div[data-v-e9a53c20] {\r\n  margin: auto;\n}\n.lineData svg[data-v-e9a53c20] {\r\n  cursor: pointer;\r\n  padding: 5px;\n}\n.lineData svg[data-v-e9a53c20]:hover {\r\n  border: 1px solid rgb(202, 202, 202);\r\n  border-radius: 4px;\n}\n.dataHover[data-v-e9a53c20]:hover {\r\n  background: rgb(251, 255, 238);\r\n  border-radius: 8px;\n}\n.calendarWrap[data-v-e9a53c20] {\r\n  margin-right: 20px;\n}\r\n", ""]);
+exports.push([module.i, "\n.taskWrap[data-v-e9a53c20] {\r\n  background: rgb(255, 255, 255);\r\n  border: 1px solid rgb(240, 239, 239);\r\n  border-radius: 10px;\r\n  padding: 12px 20px;\r\n  margin-top: 10px;\r\n  margin-bottom: 10px;\n}\n.lineData[data-v-e9a53c20] {\r\n  line-height: 30px;\n}\n.lineData div[data-v-e9a53c20] {\r\n  margin: auto;\n}\n.lineData svg[data-v-e9a53c20] {\r\n  cursor: pointer;\r\n  padding: 5px;\n}\n.lineData svg[data-v-e9a53c20]:hover {\r\n  border: 1px solid rgb(202, 202, 202);\r\n  border-radius: 4px;\n}\n.dataHover[data-v-e9a53c20]:hover {\r\n  background: rgb(251, 255, 238);\r\n  border-radius: 8px;\n}\n.calendarWrap[data-v-e9a53c20] {\r\n  margin-right: 20px;\n}\r\n", ""]);
 
 // exports
 
@@ -7621,6 +7737,25 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 // module
 exports.push([module.i, "\n.newWorkWrap[data-v-14620327] {\r\n  background: rgb(232, 246, 255);\r\n  border: 1px solid rgb(240, 239, 239);\r\n  border-radius: 10px;\r\n  padding: 12px 20px;\r\n  margin-top: 10px;\n}\r\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/completedWorks.vue?vue&type=style&index=0&id=539b70fc&scoped=true&lang=css&":
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/completedWorks.vue?vue&type=style&index=0&id=539b70fc&scoped=true&lang=css& ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.completedWork[data-v-539b70fc] {\r\n  margin: 5px 0;\r\n  padding: 5px 15px;\r\n  background: rgb(246, 245, 245);\r\n  border: 1px solid rgb(233, 233, 233);\r\n  border-radius: 6px;\n}\r\n", ""]);
 
 // exports
 
@@ -57080,6 +57215,36 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/completedWorks.vue?vue&type=style&index=0&id=539b70fc&scoped=true&lang=css&":
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/completedWorks.vue?vue&type=style&index=0&id=539b70fc&scoped=true&lang=css& ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./completedWorks.vue?vue&type=style&index=0&id=539b70fc&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/completedWorks.vue?vue&type=style&index=0&id=539b70fc&scoped=true&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/lib/addStyles.js":
 /*!****************************************************!*\
   !*** ./node_modules/style-loader/lib/addStyles.js ***!
@@ -58242,6 +58407,16 @@ var render = function() {
           _c(
             "router-link",
             {
+              staticClass: "adminNavItem col-sm-3",
+              class: { adminNavSelected: this.$route.name == "completedWorks" },
+              attrs: { to: { name: "completedWorks" } }
+            },
+            [_vm._v("Завершенные объекты")]
+          ),
+          _vm._v(" "),
+          _c(
+            "router-link",
+            {
               staticClass: "adminNavItem col-sm-2",
               class: { adminNavSelected: this.$route.name == "users" },
               attrs: { to: { name: "users" } }
@@ -59023,556 +59198,613 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "taskWrap" }, [
-    _c("div", { staticClass: "d-flex justify-content-between" }, [
-      _c("h3", [_vm._v(_vm._s(_vm.task.work.name))]),
-      _vm._v(" "),
-      _c("div", [
-        _vm.isAdmin && _vm.isFull
-          ? _c(
-              "button",
-              {
-                staticClass: "btn btn-success",
-                on: {
-                  click: function($event) {
-                    return _vm.completeTask()
-                  }
-                }
-              },
-              [_vm._v("Завершить работу")]
-            )
-          : _vm._e(),
-        _vm._v(" "),
-        _vm.isAdmin
-          ? _c(
-              "button",
-              {
-                staticClass: "btn btn-danger",
-                on: {
-                  click: function($event) {
-                    return _vm.deleteTask()
-                  }
-                }
-              },
-              [_vm._v("Удалить работу")]
-            )
-          : _vm._e()
-      ])
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "row lineData" }, [
-      _c("div", { staticClass: "col-md-3" }, [_vm._v("Исполнитель")]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-3" }, [
-        _vm._v(_vm._s(_vm.task.user.name))
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-3" }, [_vm._v("Тип работ")]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-3" }, [_vm._v(_vm._s(_vm.typeWork))])
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "row lineData" }, [
-      _c("div", { staticClass: "col-md-3" }, [
-        _vm._v("Необходимый объем работ")
-      ]),
-      _vm._v(" "),
-      _vm.isEditCapacity
-        ? _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.task.capacity,
-                  expression: "task.capacity"
-                }
-              ],
-              staticClass: "form-control",
-              domProps: { value: _vm.task.capacity },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.task, "capacity", $event.target.value)
-                }
-              }
-            }),
+    _vm.task.status == 2
+      ? _c("div", [
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col-md-2 vAlign" }, [
+              _vm._v(_vm._s(_vm.task.work.name))
+            ]),
             _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-primary",
-                on: {
-                  click: function($event) {
-                    return _vm.editCapacity()
-                  }
-                }
-              },
-              [_vm._v("Ок")]
-            )
-          ])
-        : _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
-            _c("div", { staticClass: "flex-grow-1" }, [
+            _c("div", { staticClass: "col-md-2 vAlign text-center" }, [
+              _vm._v(_vm._s(_vm.task.user.name))
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-2 vAlign text-center" }, [
               _vm._v(_vm._s(_vm.task.capacity))
             ]),
             _vm._v(" "),
-            _vm.isAdmin
-              ? _c(
-                  "div",
-                  {
-                    on: {
-                      click: function($event) {
-                        return _vm.editCapacity()
-                      }
-                    }
-                  },
-                  [_c("BtnEdit")],
-                  1
-                )
-              : _vm._e()
-          ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-3" }, [
-        _vm._v("Выполненный объем работ")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-3" }, [
-        _vm._v(_vm._s(_vm.completedWork))
-      ])
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "row lineData" }, [
-      _c("div", { staticClass: "col-md-3" }, [_vm._v("Срок выполнения работ")]),
-      _vm._v(" "),
-      _vm.isEditEnd
-        ? _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.task.end,
-                  expression: "task.end"
-                }
-              ],
-              staticClass: "form-control",
-              domProps: { value: _vm.task.end },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.task, "end", $event.target.value)
-                }
-              }
-            }),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-primary",
-                on: {
-                  click: function($event) {
-                    return _vm.editEnd()
-                  }
-                }
-              },
-              [_vm._v("Ок")]
-            )
-          ])
-        : _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
-            _c("div", { staticClass: "flex-grow-1" }, [
-              _vm._v(_vm._s(_vm.task.end))
+            _c("div", { staticClass: "col-md-2 vAlign text-center" }, [
+              _vm._v(_vm._s(_vm.task.updated_at))
             ]),
             _vm._v(" "),
-            _vm.isAdmin
-              ? _c(
-                  "div",
-                  {
-                    on: {
-                      click: function($event) {
-                        return _vm.editEnd()
-                      }
-                    }
-                  },
-                  [_c("BtnEdit")],
-                  1
-                )
-              : _vm._e()
-          ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-3" }, [
-        _vm._v("Расчетная дата окончания работ")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-3" }, [
-        _vm._v(_vm._s(_vm.completedWorkDT))
-      ])
-    ]),
-    _vm._v(" "),
-    _vm.isAdmin
-      ? _c("div", { staticClass: "row lineData" }, [
-          _c("div", { staticClass: "col-md-3" }, [
-            _vm._v("Норматив объем работ/чел/сут")
-          ]),
-          _vm._v(" "),
-          _vm.isEditStandartPeople
-            ? _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.task.standartPeople,
-                      expression: "task.standartPeople"
-                    }
-                  ],
-                  staticClass: "form-control",
-                  domProps: { value: _vm.task.standartPeople },
+            _c("div", { staticClass: "col-md-4 text-center" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
                   on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.$set(_vm.task, "standartPeople", $event.target.value)
+                    click: function($event) {
+                      return _vm.restoreTask(_vm.task.id)
                     }
                   }
-                }),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-primary",
-                    on: {
-                      click: function($event) {
-                        return _vm.editStandartPeople()
-                      }
-                    }
-                  },
-                  [_vm._v("Ок")]
-                )
-              ])
-            : _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
-                _c("div", { staticClass: "flex-grow-1" }, [
-                  _vm._v(_vm._s(_vm.task.standartPeople))
-                ]),
-                _vm._v(" "),
-                _vm.isAdmin
-                  ? _c(
-                      "div",
-                      {
-                        on: {
-                          click: function($event) {
-                            return _vm.editStandartPeople()
-                          }
-                        }
-                      },
-                      [_c("BtnEdit")],
-                      1
-                    )
-                  : _vm._e()
-              ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-6" })
-        ])
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.isAdmin
-      ? _c("div", { staticClass: "row lineData" }, [
-          _c("div", { staticClass: "col-md-3" }, [
-            _vm._v("Норматив раствор/объем работ")
-          ]),
-          _vm._v(" "),
-          _vm.isEditStandartConsumption
-            ? _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.task.standartConsumption,
-                      expression: "task.standartConsumption"
-                    }
-                  ],
-                  staticClass: "form-control",
-                  domProps: { value: _vm.task.standartConsumption },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.$set(
-                        _vm.task,
-                        "standartConsumption",
-                        $event.target.value
-                      )
-                    }
-                  }
-                }),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-primary",
-                    on: {
-                      click: function($event) {
-                        return _vm.editStandartConsumption()
-                      }
-                    }
-                  },
-                  [_vm._v("Ок")]
-                )
-              ])
-            : _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
-                _c("div", { staticClass: "flex-grow-1" }, [
-                  _vm._v(_vm._s(_vm.task.standartConsumption))
-                ]),
-                _vm._v(" "),
-                _vm.isAdmin
-                  ? _c(
-                      "div",
-                      {
-                        on: {
-                          click: function($event) {
-                            return _vm.editStandartConsumption()
-                          }
-                        }
-                      },
-                      [_c("BtnEdit")],
-                      1
-                    )
-                  : _vm._e()
-              ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-6" })
-        ])
-      : _vm._e(),
-    _vm._v(" "),
-    _c("br"),
-    _vm._v(" "),
-    _c("div", { staticClass: "row" }, [
-      _c(
-        "div",
-        { staticClass: "calendarWrap col-md-3" },
-        [
-          _c("Calendar", {
-            attrs: { disabledDates: { to: _vm.taskStart, from: _vm.today } },
-            model: {
-              value: _vm.date,
-              callback: function($$v) {
-                _vm.date = $$v
-              },
-              expression: "date"
-            }
-          })
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "lineData col-md-3" }, [
-        _vm.todayNote == null
-          ? _c("div", [
-              _c("label", [_vm._v("Кол-во человек:")]),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.todayPeople,
-                    expression: "todayPeople"
-                  }
-                ],
-                staticClass: "form-control",
-                domProps: { value: _vm.todayPeople },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.todayPeople = $event.target.value
-                  }
-                }
-              })
+                },
+                [_vm._v("Восстановить работу")]
+              )
             ])
-          : _c("div", { staticClass: "d-flex" }, [
-              _c("div", { staticClass: "flex-grow-1 d-flex" }, [
-                _c("label", { staticClass: "marginR15" }, [
-                  _vm._v("Кол-во человек:")
+          ])
+        ])
+      : _c("div", [
+          _c("div", { staticClass: "d-flex justify-content-between" }, [
+            _c("h3", [_vm._v(_vm._s(_vm.task.work.name))]),
+            _vm._v(" "),
+            _c("div", [
+              _vm.isAdmin && _vm.isFull
+                ? _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success",
+                      on: {
+                        click: function($event) {
+                          return _vm.completeTask()
+                        }
+                      }
+                    },
+                    [_vm._v("Завершить работу")]
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.isAdmin
+                ? _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-danger",
+                      on: {
+                        click: function($event) {
+                          return _vm.deleteTask()
+                        }
+                      }
+                    },
+                    [_vm._v("Удалить работу")]
+                  )
+                : _vm._e()
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "row lineData" }, [
+            _c("div", { staticClass: "col-md-3" }, [_vm._v("Исполнитель")]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-3" }, [
+              _vm._v(_vm._s(_vm.task.user.name))
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-3" }, [_vm._v("Тип работ")]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-3" }, [
+              _vm._v(_vm._s(_vm.typeWork))
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "row lineData" }, [
+            _c("div", { staticClass: "col-md-3" }, [
+              _vm._v("Необходимый объем работ")
+            ]),
+            _vm._v(" "),
+            _vm.isEditCapacity
+              ? _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.task.capacity,
+                        expression: "task.capacity"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    domProps: { value: _vm.task.capacity },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.task, "capacity", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-primary",
+                      on: {
+                        click: function($event) {
+                          return _vm.editCapacity()
+                        }
+                      }
+                    },
+                    [_vm._v("Ок")]
+                  )
+                ])
+              : _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
+                  _c("div", { staticClass: "flex-grow-1" }, [
+                    _vm._v(_vm._s(_vm.task.capacity))
+                  ]),
+                  _vm._v(" "),
+                  _vm.isAdmin
+                    ? _c(
+                        "div",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.editCapacity()
+                            }
+                          }
+                        },
+                        [_c("BtnEdit")],
+                        1
+                      )
+                    : _vm._e()
+                ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-3" }, [
+              _vm._v("Выполненный объем работ")
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-3" }, [
+              _vm._v(_vm._s(_vm.completedWork))
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "row lineData" }, [
+            _c("div", { staticClass: "col-md-3" }, [
+              _vm._v("Срок выполнения работ")
+            ]),
+            _vm._v(" "),
+            _vm.isEditEnd
+              ? _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.task.end,
+                        expression: "task.end"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    domProps: { value: _vm.task.end },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.task, "end", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-primary",
+                      on: {
+                        click: function($event) {
+                          return _vm.editEnd()
+                        }
+                      }
+                    },
+                    [_vm._v("Ок")]
+                  )
+                ])
+              : _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
+                  _c("div", { staticClass: "flex-grow-1" }, [
+                    _vm._v(_vm._s(_vm.task.end))
+                  ]),
+                  _vm._v(" "),
+                  _vm.isAdmin
+                    ? _c(
+                        "div",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.editEnd()
+                            }
+                          }
+                        },
+                        [_c("BtnEdit")],
+                        1
+                      )
+                    : _vm._e()
+                ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-3" }, [
+              _vm._v("Расчетная дата окончания работ")
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-3" }, [
+              _vm._v(_vm._s(_vm.completedWorkDT))
+            ])
+          ]),
+          _vm._v(" "),
+          _vm.isAdmin
+            ? _c("div", { staticClass: "row lineData" }, [
+                _c("div", { staticClass: "col-md-3" }, [
+                  _vm._v("Норматив объем работ/чел/сут")
                 ]),
                 _vm._v(" "),
-                !_vm.isEditTodayPeople
-                  ? _c("div", [
-                      _c("label", { staticClass: "marginR15" }, [
-                        _vm._v(
-                          _vm._s(
-                            _vm.todayNote != null ? _vm.todayNote.people : ""
-                          )
-                        )
-                      ])
-                    ])
-                  : _c("div", [
+                _vm.isEditStandartPeople
+                  ? _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
                       _c("input", {
                         directives: [
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.todayNote.people,
-                            expression: "todayNote.people"
+                            value: _vm.task.standartPeople,
+                            expression: "task.standartPeople"
                           }
                         ],
-                        staticClass: "width50 form-control",
-                        domProps: { value: _vm.todayNote.people },
+                        staticClass: "form-control",
+                        domProps: { value: _vm.task.standartPeople },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
                               return
                             }
                             _vm.$set(
-                              _vm.todayNote,
-                              "people",
+                              _vm.task,
+                              "standartPeople",
                               $event.target.value
                             )
                           }
                         }
-                      })
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary",
+                          on: {
+                            click: function($event) {
+                              return _vm.editStandartPeople()
+                            }
+                          }
+                        },
+                        [_vm._v("Ок")]
+                      )
                     ])
-              ]),
-              _vm._v(" "),
-              _vm.isAdmin
-                ? _c(
-                    "div",
-                    {
-                      on: {
-                        click: function($event) {
-                          return _vm.editTodayPeople()
-                        }
-                      }
-                    },
-                    [
-                      !_vm.isEditTodayPeople
-                        ? _c("div", [_c("BtnEdit")], 1)
-                        : _c("div", [
-                            _c("button", { staticClass: "btn btn-primary" }, [
-                              _vm._v("Ок")
-                            ])
-                          ])
-                    ]
-                  )
-                : _vm._e()
-            ]),
-        _vm._v(" "),
-        _vm.todayNote == null
-          ? _c("div", [
-              _c("label", [_vm._v("Кол-во раствора:")]),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.todayConsumption,
-                    expression: "todayConsumption"
-                  }
-                ],
-                staticClass: "form-control",
-                domProps: { value: _vm.todayConsumption },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.todayConsumption = $event.target.value
-                  }
-                }
-              })
-            ])
-          : _c("div", { staticClass: "d-flex" }, [
-              _c("div", { staticClass: "flex-grow-1 d-flex" }, [
-                _c("label", { staticClass: "marginR15" }, [
-                  _vm._v("Кол-во раствора:")
+                  : _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
+                      _c("div", { staticClass: "flex-grow-1" }, [
+                        _vm._v(_vm._s(_vm.task.standartPeople))
+                      ]),
+                      _vm._v(" "),
+                      _vm.isAdmin
+                        ? _c(
+                            "div",
+                            {
+                              on: {
+                                click: function($event) {
+                                  return _vm.editStandartPeople()
+                                }
+                              }
+                            },
+                            [_c("BtnEdit")],
+                            1
+                          )
+                        : _vm._e()
+                    ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-md-6" })
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.isAdmin
+            ? _c("div", { staticClass: "row lineData" }, [
+                _c("div", { staticClass: "col-md-3" }, [
+                  _vm._v("Норматив раствор/объем работ")
                 ]),
                 _vm._v(" "),
-                !_vm.isEditTodayConsumption
-                  ? _c("div", [
-                      _c("label", { staticClass: "marginR15" }, [
-                        _vm._v(
-                          _vm._s(
-                            _vm.todayNote != null
-                              ? _vm.todayNote.consumption
-                              : ""
-                          )
-                        )
-                      ])
-                    ])
-                  : _c("div", [
+                _vm.isEditStandartConsumption
+                  ? _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
                       _c("input", {
                         directives: [
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.todayConsumption,
-                            expression: "todayConsumption"
+                            value: _vm.task.standartConsumption,
+                            expression: "task.standartConsumption"
                           }
                         ],
-                        staticClass: "width50 form-control",
-                        domProps: { value: _vm.todayConsumption },
+                        staticClass: "form-control",
+                        domProps: { value: _vm.task.standartConsumption },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
                               return
                             }
-                            _vm.todayConsumption = $event.target.value
+                            _vm.$set(
+                              _vm.task,
+                              "standartConsumption",
+                              $event.target.value
+                            )
                           }
                         }
-                      })
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary",
+                          on: {
+                            click: function($event) {
+                              return _vm.editStandartConsumption()
+                            }
+                          }
+                        },
+                        [_vm._v("Ок")]
+                      )
                     ])
-              ]),
+                  : _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
+                      _c("div", { staticClass: "flex-grow-1" }, [
+                        _vm._v(_vm._s(_vm.task.standartConsumption))
+                      ]),
+                      _vm._v(" "),
+                      _vm.isAdmin
+                        ? _c(
+                            "div",
+                            {
+                              on: {
+                                click: function($event) {
+                                  return _vm.editStandartConsumption()
+                                }
+                              }
+                            },
+                            [_c("BtnEdit")],
+                            1
+                          )
+                        : _vm._e()
+                    ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-md-6" })
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("div", { staticClass: "row" }, [
+            _c(
+              "div",
+              { staticClass: "calendarWrap col-md-3" },
+              [
+                _c("Calendar", {
+                  attrs: {
+                    disabledDates: { to: _vm.taskStart, from: _vm.today }
+                  },
+                  model: {
+                    value: _vm.date,
+                    callback: function($$v) {
+                      _vm.date = $$v
+                    },
+                    expression: "date"
+                  }
+                })
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c("div", { staticClass: "lineData col-md-3" }, [
+              _vm.todayNote == null
+                ? _c("div", [
+                    _c("label", [_vm._v("Кол-во человек:")]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.todayPeople,
+                          expression: "todayPeople"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      domProps: { value: _vm.todayPeople },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.todayPeople = $event.target.value
+                        }
+                      }
+                    })
+                  ])
+                : _c("div", { staticClass: "d-flex" }, [
+                    _c("div", { staticClass: "flex-grow-1 d-flex" }, [
+                      _c("label", { staticClass: "marginR15" }, [
+                        _vm._v("Кол-во человек:")
+                      ]),
+                      _vm._v(" "),
+                      !_vm.isEditTodayPeople
+                        ? _c("div", [
+                            _c("label", { staticClass: "marginR15" }, [
+                              _vm._v(
+                                _vm._s(
+                                  _vm.todayNote != null
+                                    ? _vm.todayNote.people
+                                    : ""
+                                )
+                              )
+                            ])
+                          ])
+                        : _c("div", [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.todayNote.people,
+                                  expression: "todayNote.people"
+                                }
+                              ],
+                              staticClass: "width50 form-control",
+                              domProps: { value: _vm.todayNote.people },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.todayNote,
+                                    "people",
+                                    $event.target.value
+                                  )
+                                }
+                              }
+                            })
+                          ])
+                    ]),
+                    _vm._v(" "),
+                    _vm.isAdmin
+                      ? _c(
+                          "div",
+                          {
+                            on: {
+                              click: function($event) {
+                                return _vm.editTodayPeople()
+                              }
+                            }
+                          },
+                          [
+                            !_vm.isEditTodayPeople
+                              ? _c("div", [_c("BtnEdit")], 1)
+                              : _c("div", [
+                                  _c(
+                                    "button",
+                                    { staticClass: "btn btn-primary" },
+                                    [_vm._v("Ок")]
+                                  )
+                                ])
+                          ]
+                        )
+                      : _vm._e()
+                  ]),
               _vm._v(" "),
-              _vm.isAdmin
+              _vm.todayNote == null
+                ? _c("div", [
+                    _c("label", [_vm._v("Кол-во раствора:")]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.todayConsumption,
+                          expression: "todayConsumption"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      domProps: { value: _vm.todayConsumption },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.todayConsumption = $event.target.value
+                        }
+                      }
+                    })
+                  ])
+                : _c("div", { staticClass: "d-flex" }, [
+                    _c("div", { staticClass: "flex-grow-1 d-flex" }, [
+                      _c("label", { staticClass: "marginR15" }, [
+                        _vm._v("Кол-во раствора:")
+                      ]),
+                      _vm._v(" "),
+                      !_vm.isEditTodayConsumption
+                        ? _c("div", [
+                            _c("label", { staticClass: "marginR15" }, [
+                              _vm._v(
+                                _vm._s(
+                                  _vm.todayNote != null
+                                    ? _vm.todayNote.consumption
+                                    : ""
+                                )
+                              )
+                            ])
+                          ])
+                        : _c("div", [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.todayConsumption,
+                                  expression: "todayConsumption"
+                                }
+                              ],
+                              staticClass: "width50 form-control",
+                              domProps: { value: _vm.todayConsumption },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.todayConsumption = $event.target.value
+                                }
+                              }
+                            })
+                          ])
+                    ]),
+                    _vm._v(" "),
+                    _vm.isAdmin
+                      ? _c(
+                          "div",
+                          {
+                            on: {
+                              click: function($event) {
+                                return _vm.editTodayConsumption()
+                              }
+                            }
+                          },
+                          [
+                            !_vm.isEditTodayConsumption
+                              ? _c("div", [_c("BtnEdit")], 1)
+                              : _c("div", [
+                                  _c(
+                                    "button",
+                                    { staticClass: "btn btn-primary" },
+                                    [_vm._v("Ок")]
+                                  )
+                                ])
+                          ]
+                        )
+                      : _vm._e()
+                  ]),
+              _vm._v(" "),
+              _vm.todayNote == null
                 ? _c(
-                    "div",
+                    "button",
                     {
+                      staticClass: "btn btn-primary marginT15",
                       on: {
                         click: function($event) {
-                          return _vm.editTodayConsumption()
+                          return _vm.sendNote()
                         }
                       }
                     },
-                    [
-                      !_vm.isEditTodayConsumption
-                        ? _c("div", [_c("BtnEdit")], 1)
-                        : _c("div", [
-                            _c("button", { staticClass: "btn btn-primary" }, [
-                              _vm._v("Ок")
-                            ])
-                          ])
-                    ]
+                    [_vm._v("Отправить данные")]
                   )
                 : _vm._e()
             ]),
-        _vm._v(" "),
-        _vm.todayNote == null
-          ? _c(
-              "button",
-              {
-                staticClass: "btn btn-primary marginT15",
-                on: {
-                  click: function($event) {
-                    return _vm.sendNote()
-                  }
-                }
-              },
-              [_vm._v("Отправить данные")]
-            )
-          : _vm._e()
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-6" })
-    ]),
-    _vm._v(" "),
-    _c("div", [_c("highcharts", { attrs: { options: _vm.chartOptions } })], 1)
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-6" })
+          ]),
+          _vm._v(" "),
+          _c(
+            "div",
+            [_c("highcharts", { attrs: { options: _vm.chartOptions } })],
+            1
+          )
+        ])
   ])
 }
 var staticRenderFns = []
@@ -60080,7 +60312,19 @@ var render = function() {
                     }
                   }
                 })
-              : _vm._e()
+              : _vm._e(),
+            _vm._v(" "),
+            _vm._l(_vm.completedTasks, function(task) {
+              return _c("Task", {
+                key: task.id,
+                attrs: { work: _vm.selectedWork, isAdmin: true, task: task },
+                on: {
+                  refresh: function($event) {
+                    return _vm.refresh()
+                  }
+                }
+              })
+            })
           ],
           2
         )
@@ -60088,6 +60332,90 @@ var render = function() {
   ])
 }
 var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/completedWorks.vue?vue&type=template&id=539b70fc&scoped=true&":
+/*!*****************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/completedWorks.vue?vue&type=template&id=539b70fc&scoped=true& ***!
+  \*****************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _vm._m(0),
+      _vm._v(" "),
+      _vm._l(_vm.works, function(work) {
+        return _c("div", { key: work.id, staticClass: "completedWork" }, [
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col-md-5 vAlign" }, [
+              _vm._v(_vm._s(work.name))
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-2 vAlign text-center" }, [
+              _vm._v(_vm._s(work.updated_at))
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-2 vAlign text-center" }, [
+              _vm._v(_vm._s(work.tasks.length))
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-3 text-center" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  on: {
+                    click: function($event) {
+                      return _vm.restoreWork(work.id)
+                    }
+                  }
+                },
+                [_vm._v("Восстановить объект")]
+              )
+            ])
+          ])
+        ])
+      })
+    ],
+    2
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "col-md-5 vAlign text-center" }, [
+        _vm._v("Название объекта")
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-2 vAlign text-center" }, [
+        _vm._v("Дата завершения")
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-2 vAlign text-center" }, [
+        _vm._v("Кол-во задач")
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-3 text-center" })
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -78978,6 +79306,93 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/completedWorks.vue":
+/*!****************************************************!*\
+  !*** ./resources/js/components/completedWorks.vue ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _completedWorks_vue_vue_type_template_id_539b70fc_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./completedWorks.vue?vue&type=template&id=539b70fc&scoped=true& */ "./resources/js/components/completedWorks.vue?vue&type=template&id=539b70fc&scoped=true&");
+/* harmony import */ var _completedWorks_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./completedWorks.vue?vue&type=script&lang=js& */ "./resources/js/components/completedWorks.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _completedWorks_vue_vue_type_style_index_0_id_539b70fc_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./completedWorks.vue?vue&type=style&index=0&id=539b70fc&scoped=true&lang=css& */ "./resources/js/components/completedWorks.vue?vue&type=style&index=0&id=539b70fc&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _completedWorks_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _completedWorks_vue_vue_type_template_id_539b70fc_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _completedWorks_vue_vue_type_template_id_539b70fc_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "539b70fc",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/completedWorks.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/completedWorks.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/components/completedWorks.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_completedWorks_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./completedWorks.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/completedWorks.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_completedWorks_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/completedWorks.vue?vue&type=style&index=0&id=539b70fc&scoped=true&lang=css&":
+/*!*************************************************************************************************************!*\
+  !*** ./resources/js/components/completedWorks.vue?vue&type=style&index=0&id=539b70fc&scoped=true&lang=css& ***!
+  \*************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_completedWorks_vue_vue_type_style_index_0_id_539b70fc_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./completedWorks.vue?vue&type=style&index=0&id=539b70fc&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/completedWorks.vue?vue&type=style&index=0&id=539b70fc&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_completedWorks_vue_vue_type_style_index_0_id_539b70fc_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_completedWorks_vue_vue_type_style_index_0_id_539b70fc_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_completedWorks_vue_vue_type_style_index_0_id_539b70fc_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_completedWorks_vue_vue_type_style_index_0_id_539b70fc_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_completedWorks_vue_vue_type_style_index_0_id_539b70fc_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/components/completedWorks.vue?vue&type=template&id=539b70fc&scoped=true&":
+/*!***********************************************************************************************!*\
+  !*** ./resources/js/components/completedWorks.vue?vue&type=template&id=539b70fc&scoped=true& ***!
+  \***********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_completedWorks_vue_vue_type_template_id_539b70fc_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./completedWorks.vue?vue&type=template&id=539b70fc&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/completedWorks.vue?vue&type=template&id=539b70fc&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_completedWorks_vue_vue_type_template_id_539b70fc_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_completedWorks_vue_vue_type_template_id_539b70fc_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/routes/router.js":
 /*!***************************************!*\
   !*** ./resources/js/routes/router.js ***!
@@ -78990,9 +79405,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
-/* harmony import */ var _components_Admin__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/Admin */ "./resources/js/components/Admin.vue");
-/* harmony import */ var _components_Users__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/Users */ "./resources/js/components/Users.vue");
-/* harmony import */ var _components_Works__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../components/Works */ "./resources/js/components/Works.vue");
+/* harmony import */ var _components_Users__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/Users */ "./resources/js/components/Users.vue");
+/* harmony import */ var _components_Works__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/Works */ "./resources/js/components/Works.vue");
+/* harmony import */ var _components_completedWorks__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../components/completedWorks */ "./resources/js/components/completedWorks.vue");
 
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
@@ -79004,11 +79419,15 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
   routes: [{
     path: '/',
     name: 'works',
-    component: _components_Works__WEBPACK_IMPORTED_MODULE_4__["default"]
+    component: _components_Works__WEBPACK_IMPORTED_MODULE_3__["default"]
+  }, {
+    path: '/complete',
+    name: 'completedWorks',
+    component: _components_completedWorks__WEBPACK_IMPORTED_MODULE_4__["default"]
   }, {
     path: '/users',
     name: 'users',
-    component: _components_Users__WEBPACK_IMPORTED_MODULE_3__["default"]
+    component: _components_Users__WEBPACK_IMPORTED_MODULE_2__["default"]
   }, {
     path: '*',
     redirect: '/'

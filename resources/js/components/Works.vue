@@ -47,6 +47,14 @@
         @cancel="isNewTask = false"
         @added="refresh()"
       />
+      <Task
+        :work="selectedWork"
+        :isAdmin="true"
+        v-for="task in completedTasks"
+        :key="task.id"
+        :task="task"
+        @refresh="refresh()"
+      />
     </div>
   </div>
 </template>
@@ -59,9 +67,11 @@ export default {
   components: { Task, NewTask },
   data() {
     return {
+      isCompleted: false,
       works: [],
       selectedWork: null,
       tasks: [],
+      completedTasks: [],
       isNewTask: false,
       isAddNewWork: false,
       newWorkTitle: ""
@@ -69,15 +79,15 @@ export default {
   },
   computed: {
     taskCompletable() {
-      if (this.selectedWork != null){
+      if (this.selectedWork != null) {
         let result = true;
-        this.tasks.forEach(function(elem){
-          if (elem.status == 1){
+        this.tasks.forEach(function (elem) {
+          if (elem.status == 1) {
             result = false;
           }
         })
         return result;
-      }else{
+      } else {
         return false;
       }
     }
@@ -109,7 +119,17 @@ export default {
         }
       })
         .then(function (response) {
-          this.tasks = response.data;
+          this.tasks = [];
+          this.completedTasks = [];
+          response.data.forEach(task => {
+            if (task.status == 1)
+              this.tasks.push(task);
+            else{
+              task.updated_at = task.updated_at.substr(0, 10);
+              this.completedTasks.push(task);
+            }
+          });
+          //this.tasks = response.data;
         });
     },
     addWork() {
@@ -149,7 +169,7 @@ export default {
         });
     }
   },
-  created() {
+  beforeMount() {
     this.getListWorks();
   }
 };

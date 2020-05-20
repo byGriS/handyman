@@ -7,6 +7,11 @@
         :class="{'adminNavSelected': this.$route.name == 'works'}"
       >Объекты</router-link>
       <router-link
+        :to="{name: 'completedWorks'}"
+        class="adminNavItem col-sm-3"
+        :class="{'adminNavSelected': this.$route.name == 'completedWorks'}"
+      >Завершенные объекты</router-link>
+      <router-link
         :to="{name: 'users'}"
         class="adminNavItem col-sm-2"
         :class="{'adminNavSelected': this.$route.name == 'users'}"
@@ -19,8 +24,8 @@
 
 <script>
 export default {
-  data(){
-    return{
+  data() {
+    return {
 
     }
   },
