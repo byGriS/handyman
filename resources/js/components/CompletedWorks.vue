@@ -4,8 +4,7 @@
       <div class="col-md-5 vAlign text-center">Название объекта</div>
       <div class="col-md-2 vAlign text-center">Дата завершения</div>
       <div class="col-md-2 vAlign text-center">Кол-во задач</div>
-      <div class="col-md-3 text-center">
-      </div>
+      <div class="col-md-3 text-center"></div>
     </div>
     <div class="completedWork" v-for="work in works" :key="work.id">
       <div class="row">
@@ -13,7 +12,7 @@
         <div class="col-md-2 vAlign text-center">{{work.updated_at}}</div>
         <div class="col-md-2 vAlign text-center">{{work.tasks.length}}</div>
         <div class="col-md-3 text-center">
-          <button class="btn btn-primary" @click="restoreWork(work.id)">Восстановить объект</button>
+          <button v-if="isAdmin" class="btn btn-primary" @click="restoreWork(work.id)">Восстановить объект</button>
         </div>
       </div>
     </div>
@@ -25,6 +24,11 @@ export default {
   data() {
     return {
       works: []
+    }
+  },
+  computed: {
+    isAdmin() {
+      return this.$store.state.userRole == 1;
     }
   },
   methods: {
@@ -42,13 +46,13 @@ export default {
           });
         })
     },
-    restoreWork(workId){
+    restoreWork(workId) {
       this.$http
-        .post(this.$store.state.host + "api/restoreWork",{
+        .post(this.$store.state.host + "api/restoreWork", {
           api_token: this.$store.state.userApi,
           id: workId
         })
-        .then(()=>{
+        .then(() => {
           this.getListWorks();
         })
     }

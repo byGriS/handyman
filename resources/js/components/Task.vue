@@ -7,7 +7,7 @@
         <div class="col-md-2 vAlign text-center">{{task.capacity}}</div>
         <div class="col-md-2 vAlign text-center">{{task.updated_at}}</div>
         <div class="col-md-4 text-center">
-          <button class="btn btn-primary" @click="restoreTask(task.id)">Восстановить работу</button>
+          <button v-if="this.$store.state.userRole == 1" class="btn btn-primary" @click="restoreTask(task.id)">Восстановить работу</button>
         </div>
       </div>
     </div>
@@ -62,7 +62,7 @@
         <div class="col-md-3">{{completedWorkDT}}</div>
       </div>
 
-      <div v-if="isAdmin" class="row lineData">
+      <div v-if="isAdmin || isLeader" class="row lineData">
         <div class="col-md-3">Норматив объем работ/чел/сут</div>
         <div v-if="isEditStandartPeople" class="col-md-3 d-flex dataHover">
           <input class="form-control" v-model="task.standartPeople" />
@@ -76,7 +76,7 @@
         </div>
         <div class="col-md-6" />
       </div>
-      <div v-if="isAdmin" class="row lineData">
+      <div v-if="isAdmin || isLeader" class="row lineData">
         <div class="col-md-3">Норматив раствор/объем работ</div>
         <div v-if="isEditStandartConsumption" class="col-md-3 d-flex dataHover">
           <input class="form-control" v-model="task.standartConsumption" />
@@ -167,7 +167,7 @@ import BtnEdit from "./BtnEdit";
 
 export default {
   components: { Calendar, BtnEdit },
-  props: ["task", "isAdmin"],
+  props: ["task"],
   data() {
     return {
       todayNote: null,
@@ -200,6 +200,12 @@ export default {
     };
   },
   computed: {
+    isAdmin(){
+      return this.$store.state.userRole == 1;
+    },
+    isLeader(){
+      return this.$store.state.userRole == 2;
+    },
     typeWork() {
       switch (this.task.typeWork) {
         case 1:

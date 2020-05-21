@@ -7,7 +7,7 @@
           <option v-for="work in works" :key="work.id" :value="work">{{work.name}}</option>
         </select>
       </div>
-      <div class="col-md-8 d-flex">
+      <div class="col-md-8 d-flex" v-if="this.$store.state.userRole == 1">
         <button class="btn btn-primary marginR15" @click="isAddNewWork = true">Добавить объект</button>
         <button
           v-if="taskCompletable"
@@ -20,6 +20,7 @@
           @click="deleteWork()"
         >Удалить объект</button>
       </div>
+      <div v-else class="col-md-8"/>
       <div class="col-md-6"></div>
     </div>
     <div class="newWorkWrap" v-if="isAddNewWork">
@@ -34,13 +35,12 @@
     <div class="marginT15" v-if="selectedWork != null">
       <Task
         :work="selectedWork"
-        :isAdmin="true"
         v-for="task in tasks"
         :key="task.id"
         :task="task"
         @refresh="refresh()"
       />
-      <button class="btn btn-info marginT15" @click="isNewTask = true">Добавить работу</button>
+      <button v-if="this.$store.state.userRole == 1" class="btn btn-info marginT15" @click="isNewTask = true">Добавить работу</button>
       <NewTask
         v-if="isNewTask"
         :work="selectedWork"
@@ -49,7 +49,6 @@
       />
       <Task
         :work="selectedWork"
-        :isAdmin="true"
         v-for="task in completedTasks"
         :key="task.id"
         :task="task"
@@ -108,6 +107,8 @@ export default {
         })
         .then(function (response) {
           this.works = response.data;
+          
+          
         });
     },
     refresh() {
@@ -169,7 +170,7 @@ export default {
         });
     }
   },
-  beforeMount() {
+  created() {
     this.getListWorks();
   }
 };
