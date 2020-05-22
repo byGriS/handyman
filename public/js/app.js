@@ -79590,8 +79590,8 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
   state: {
     userRole: 0,
     userApi: "",
-    host: "http://handyman.loc/" //host: "http://fh7929y8.bget.ru/handyman/",
-
+    //host: "http://handyman.loc/",
+    host: "http://u0838029.isp.regruhosting.ru/"
   }
 }));
 
