@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
-  public User $user;
+  public $user;
 
   public function __construct(Request $request)
   {
