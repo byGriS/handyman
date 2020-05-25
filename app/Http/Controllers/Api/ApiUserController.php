@@ -49,8 +49,8 @@ class ApiUserController extends ApiController
 
   public function addUser(Request $request)
   {
-    $valid = User::where('phone', $request->newUser['phone']);
-    if ($valid)
+    $valid = User::where('phone', $request->newUser['phone'])->get();
+    if (count($valid) != 0)
       return "2";
     $user = new User;
     $user->name = $request->newUser['name'];

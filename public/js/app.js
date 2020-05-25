@@ -2834,6 +2834,7 @@ __webpack_require__.r(__webpack_exports__);
         api_token: this.$store.state.userApi,
         newUser: this.newUser
       }).then(function (response) {
+        console.log(response);
         if (response.data == "2") alert("Пользователь с логином " + this.newUser.phone + " уже существует");else {
           this.getListUsers();
           this.addUserForm = false;
@@ -79591,8 +79592,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
     userRole: 0,
     userApi: "",
     //host: "http://handyman.loc/",
-    host: "http://u0838029.isp.regruhosting.ru/" //host: "http://test.loc/",
-
+    host: "http://u0838029.isp.regruhosting.ru/"
   }
 }));
 

@@ -124,6 +124,7 @@ export default {
           newUser: this.newUser
         })
         .then(function(response) {
+          console.log(response);
           if (response.data == "2")
             alert("Пользователь с логином " + this.newUser.phone + " уже существует");
           else {

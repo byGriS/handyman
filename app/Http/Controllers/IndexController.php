@@ -18,6 +18,8 @@ class IndexController extends Controller
   }
 
   public function test(){
+    $valid = User::where('phone', '9876543210')->get();
+    dd(count($valid));
     $tasks = Work::find(1)->tasks;
     dd($tasks[0]->user);
   }
