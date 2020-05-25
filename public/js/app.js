@@ -59469,7 +59469,7 @@ var render = function() {
           _vm._v(" "),
           _c("div", { staticClass: "row lineData" }, [
             _c("div", { staticClass: "col-md-3" }, [
-              _vm._v("Срок выполнения работ")
+              _vm._v("Планируемая дата окончания работ")
             ]),
             _vm._v(" "),
             _vm.isEditEnd

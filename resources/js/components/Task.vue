@@ -47,7 +47,7 @@
       </div>
 
       <div class="row lineData">
-        <div class="col-md-3">Срок выполнения работ</div>
+        <div class="col-md-3">Планируемая дата окончания работ</div>
         <div v-if="isEditEnd" class="col-md-3 d-flex dataHover">
           <input class="form-control" v-model="task.end" />
           <button class="btn btn-primary" @click="editEnd()">Ок</button>
