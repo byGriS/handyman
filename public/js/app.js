@@ -2412,6 +2412,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2478,15 +2491,32 @@ __webpack_require__.r(__webpack_exports__);
           break;
       }
     },
+    typeWorkLaying: function typeWorkLaying() {
+      return this.task.typeWork == 1;
+    },
     completedWork: function completedWork() {
-      var result = this.task.notes.reduce(function (sum, elem) {
-        return sum + elem.consumption;
-      }, 0);
-      return this.calcConsumptionToWork(result).toFixed(2);
+      if (this.typeWorkLaying) {
+        var result = this.task.notes.reduce(function (sum, elem) {
+          return sum + elem.consumption;
+        }, 0);
+        return this.calcConsumptionToWork(result).toFixed(2);
+      } else {
+        var result = this.task.notes.reduce(function (sum, elem) {
+          return sum + elem.people;
+        }, 0);
+        return this.calcPeopleToWork(result).toFixed(2);
+      }
     },
     completedWorkDT: function completedWorkDT() {
       if (this.task.notes.length == 0) return "----";
-      var needDays = Math.ceil((this.task.capacity - this.completedWork) / this.calcConsumptionToWork(this.task.notes[this.task.notes.length - 1].consumption));
+      var needDays = 1;
+
+      if (this.typeWorkLaying) {
+        needDays = Math.ceil((this.task.capacity - this.completedWork) / this.calcConsumptionToWork(this.task.notes[this.task.notes.length - 1].consumption));
+      } else {
+        needDays = Math.ceil((this.task.capacity - this.completedWork) / this.calcPeopleToWork(this.task.notes[this.task.notes.length - 1].people));
+      }
+
       return this.$moment().add(needDays, "days").format("YYYY-MM-DD");
     },
     taskStart: function taskStart() {
@@ -2495,6 +2525,16 @@ __webpack_require__.r(__webpack_exports__);
     },
     isFull: function isFull() {
       return parseFloat(this.completedWork) >= parseFloat(this.task.capacity);
+    },
+    deviation: function deviation() {
+      for (var i = 0; i < this.task.notes.length; i++) {
+        if (this.task.notes[i].dt == this.date) {
+          return (this.calcPeopleToWork(this.task.notes[i].people) - this.calcConsumptionToWork(this.task.notes[i].consumption)).toFixed(2);
+          ;
+        }
+      }
+
+      return 0;
     }
   },
   watch: {
@@ -7742,7 +7782,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.taskWrap[data-v-e9a53c20] {\r\n  background: rgb(255, 255, 255);\r\n  border: 1px solid rgb(240, 239, 239);\r\n  border-radius: 10px;\r\n  padding: 12px 20px;\r\n  margin-top: 10px;\r\n  margin-bottom: 10px;\n}\n.lineData[data-v-e9a53c20] {\r\n  line-height: 30px;\n}\n.lineData div[data-v-e9a53c20] {\r\n  margin: auto;\n}\n.lineData svg[data-v-e9a53c20] {\r\n  cursor: pointer;\r\n  padding: 5px;\n}\n.lineData svg[data-v-e9a53c20]:hover {\r\n  border: 1px solid rgb(202, 202, 202);\r\n  border-radius: 4px;\n}\n.dataHover[data-v-e9a53c20]:hover {\r\n  background: rgb(251, 255, 238);\r\n  border-radius: 8px;\n}\n.calendarWrap[data-v-e9a53c20] {\r\n  margin-right: 20px;\n}\r\n", ""]);
+exports.push([module.i, "\n.taskWrap[data-v-e9a53c20] {\r\n  background: rgb(255, 255, 255);\r\n  border: 1px solid rgb(240, 239, 239);\r\n  border-radius: 10px;\r\n  padding: 12px 20px;\r\n  margin-top: 10px;\r\n  margin-bottom: 10px;\n}\n.lineData[data-v-e9a53c20] {\r\n  line-height: 30px;\n}\n.lineData div[data-v-e9a53c20] {\r\n  margin: auto;\n}\n.lineData svg[data-v-e9a53c20] {\r\n  cursor: pointer;\r\n  padding: 5px;\n}\n.lineData svg[data-v-e9a53c20]:hover {\r\n  border: 1px solid rgb(202, 202, 202);\r\n  border-radius: 4px;\n}\n.dataHover[data-v-e9a53c20]:hover {\r\n  background: rgb(251, 255, 238);\r\n  border-radius: 8px;\n}\n.calendarWrap[data-v-e9a53c20] {\r\n  margin-right: 20px;\n}\n.comment[data-v-e9a53c20]{\r\n  font-size: 8pt;\r\n  line-height: 10px;\n}\r\n", ""]);
 
 // exports
 
@@ -59609,7 +59649,7 @@ var render = function() {
               ])
             : _vm._e(),
           _vm._v(" "),
-          _vm.isAdmin || _vm.isLeader
+          (_vm.isAdmin || _vm.isLeader) && _vm.typeWorkLaying
             ? _c("div", { staticClass: "row lineData" }, [
                 _c("div", { staticClass: "col-md-3" }, [
                   _vm._v("Норматив раствор/объем работ")
@@ -59800,97 +59840,102 @@ var render = function() {
                       : _vm._e()
                   ]),
               _vm._v(" "),
-              _vm.todayNote == null
+              _vm.typeWorkLaying
                 ? _c("div", [
-                    _c("label", [_vm._v("Кол-во раствора:")]),
-                    _vm._v(" "),
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.todayConsumption,
-                          expression: "todayConsumption"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      domProps: { value: _vm.todayConsumption },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.todayConsumption = $event.target.value
-                        }
-                      }
-                    })
-                  ])
-                : _c("div", { staticClass: "d-flex" }, [
-                    _c("div", { staticClass: "flex-grow-1 d-flex" }, [
-                      _c("label", { staticClass: "marginR15" }, [
-                        _vm._v("Кол-во раствора:")
-                      ]),
-                      _vm._v(" "),
-                      !_vm.isEditTodayConsumption
-                        ? _c("div", [
-                            _c("label", { staticClass: "marginR15" }, [
-                              _vm._v(
-                                _vm._s(
-                                  _vm.todayNote != null
-                                    ? _vm.todayNote.consumption
-                                    : ""
-                                )
-                              )
-                            ])
-                          ])
-                        : _c("div", [
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.todayConsumption,
-                                  expression: "todayConsumption"
-                                }
-                              ],
-                              staticClass: "width50 form-control",
-                              domProps: { value: _vm.todayConsumption },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.todayConsumption = $event.target.value
-                                }
+                    _vm.todayNote == null
+                      ? _c("div", [
+                          _c("label", [_vm._v("Кол-во раствора:")]),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.todayConsumption,
+                                expression: "todayConsumption"
                               }
-                            })
-                          ])
-                    ]),
-                    _vm._v(" "),
-                    _vm.isAdmin
-                      ? _c(
-                          "div",
-                          {
+                            ],
+                            staticClass: "form-control",
+                            domProps: { value: _vm.todayConsumption },
                             on: {
-                              click: function($event) {
-                                return _vm.editTodayConsumption()
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.todayConsumption = $event.target.value
                               }
                             }
-                          },
-                          [
+                          })
+                        ])
+                      : _c("div", { staticClass: "d-flex" }, [
+                          _c("div", { staticClass: "flex-grow-1 d-flex" }, [
+                            _c("label", { staticClass: "marginR15" }, [
+                              _vm._v("Кол-во раствора:")
+                            ]),
+                            _vm._v(" "),
                             !_vm.isEditTodayConsumption
-                              ? _c("div", [_c("BtnEdit")], 1)
-                              : _c("div", [
-                                  _c(
-                                    "button",
-                                    { staticClass: "btn btn-primary" },
-                                    [_vm._v("Ок")]
-                                  )
+                              ? _c("div", [
+                                  _c("label", { staticClass: "marginR15" }, [
+                                    _vm._v(
+                                      _vm._s(
+                                        _vm.todayNote != null
+                                          ? _vm.todayNote.consumption
+                                          : ""
+                                      )
+                                    )
+                                  ])
                                 ])
-                          ]
-                        )
-                      : _vm._e()
-                  ]),
+                              : _c("div", [
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.todayConsumption,
+                                        expression: "todayConsumption"
+                                      }
+                                    ],
+                                    staticClass: "width50 form-control",
+                                    domProps: { value: _vm.todayConsumption },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.todayConsumption =
+                                          $event.target.value
+                                      }
+                                    }
+                                  })
+                                ])
+                          ]),
+                          _vm._v(" "),
+                          _vm.isAdmin
+                            ? _c(
+                                "div",
+                                {
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.editTodayConsumption()
+                                    }
+                                  }
+                                },
+                                [
+                                  !_vm.isEditTodayConsumption
+                                    ? _c("div", [_c("BtnEdit")], 1)
+                                    : _c("div", [
+                                        _c(
+                                          "button",
+                                          { staticClass: "btn btn-primary" },
+                                          [_vm._v("Ок")]
+                                        )
+                                      ])
+                                ]
+                              )
+                            : _vm._e()
+                        ])
+                  ])
+                : _vm._e(),
               _vm._v(" "),
               _vm.todayNote == null
                 ? _c(
@@ -59905,6 +59950,24 @@ var render = function() {
                     },
                     [_vm._v("Отправить данные")]
                   )
+                : _vm._e(),
+              _vm._v(" "),
+              (_vm.isAdmin || _vm.isLeader) &&
+              _vm.todayNote != null &&
+              _vm.typeWorkLaying
+                ? _c("div", [
+                    _c("div", [
+                      _vm._v(
+                        "Отклонения от норматива: " + _vm._s(_vm.deviation)
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "comment" }, [
+                      _vm._v(
+                        "\n            *больше 0 - кол-во человек взято больше, чем необходим на объем раствора\n          "
+                      )
+                    ])
+                  ])
                 : _vm._e()
             ]),
             _vm._v(" "),

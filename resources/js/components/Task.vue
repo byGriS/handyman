@@ -7,7 +7,11 @@
         <div class="col-md-2 vAlign text-center">{{task.capacity}}</div>
         <div class="col-md-2 vAlign text-center">{{task.updated_at}}</div>
         <div class="col-md-4 text-center">
-          <button v-if="this.$store.state.userRole == 1" class="btn btn-primary" @click="restoreTask(task.id)">Восстановить работу</button>
+          <button
+            v-if="this.$store.state.userRole == 1"
+            class="btn btn-primary"
+            @click="restoreTask(task.id)"
+          >Восстановить работу</button>
         </div>
       </div>
     </div>
@@ -76,7 +80,7 @@
         </div>
         <div class="col-md-6" />
       </div>
-      <div v-if="isAdmin || isLeader" class="row lineData">
+      <div v-if="(isAdmin || isLeader) && typeWorkLaying" class="row lineData">
         <div class="col-md-3">Норматив раствор/объем работ</div>
         <div v-if="isEditStandartConsumption" class="col-md-3 d-flex dataHover">
           <input class="form-control" v-model="task.standartConsumption" />
@@ -122,26 +126,28 @@
             </div>
           </div>
 
-          <div v-if="todayNote == null">
-            <label>Кол-во раствора:</label>
-            <input class="form-control" v-model="todayConsumption" />
-          </div>
-          <div v-else class="d-flex">
-            <div class="flex-grow-1 d-flex">
-              <label class="marginR15">Кол-во раствора:</label>
-              <div v-if="!isEditTodayConsumption">
-                <label class="marginR15">{{(todayNote != null) ? todayNote.consumption : ''}}</label>
-              </div>
-              <div v-else>
-                <input class="width50 form-control" v-model="todayConsumption" />
-              </div>
+          <div v-if="typeWorkLaying">
+            <div v-if="todayNote == null">
+              <label>Кол-во раствора:</label>
+              <input class="form-control" v-model="todayConsumption" />
             </div>
-            <div v-if="isAdmin" @click="editTodayConsumption()">
-              <div v-if="!isEditTodayConsumption">
-                <BtnEdit />
+            <div v-else class="d-flex">
+              <div class="flex-grow-1 d-flex">
+                <label class="marginR15">Кол-во раствора:</label>
+                <div v-if="!isEditTodayConsumption">
+                  <label class="marginR15">{{(todayNote != null) ? todayNote.consumption : ''}}</label>
+                </div>
+                <div v-else>
+                  <input class="width50 form-control" v-model="todayConsumption" />
+                </div>
               </div>
-              <div v-else>
-                <button class="btn btn-primary">Ок</button>
+              <div v-if="isAdmin" @click="editTodayConsumption()">
+                <div v-if="!isEditTodayConsumption">
+                  <BtnEdit />
+                </div>
+                <div v-else>
+                  <button class="btn btn-primary">Ок</button>
+                </div>
               </div>
             </div>
           </div>
@@ -151,6 +157,13 @@
             class="btn btn-primary marginT15"
             @click="sendNote()"
           >Отправить данные</button>
+
+          <div v-if="(isAdmin || isLeader) && todayNote != null && typeWorkLaying">
+            <div>Отклонения от норматива: {{deviation}}</div>
+            <div class="comment">
+              *больше 0 - кол-во человек взято больше, чем необходим на объем раствора
+            </div>
+          </div>
         </div>
         <div class="col-md-6"></div>
       </div>
@@ -196,14 +209,14 @@ export default {
         },
         legend: { enabled: false },
         series: []
-      }
+      },
     };
   },
   computed: {
-    isAdmin(){
+    isAdmin() {
       return this.$store.state.userRole == 1;
     },
-    isLeader(){
+    isLeader() {
       return this.$store.state.userRole == 2;
     },
     typeWork() {
@@ -216,16 +229,31 @@ export default {
           break;
       }
     },
+    typeWorkLaying() {
+      return this.task.typeWork == 1;
+    },
     completedWork() {
-      var result = this.task.notes.reduce(function (sum, elem) {
-        return sum + elem.consumption;
-      }, 0);
-      return this.calcConsumptionToWork(result).toFixed(2);
+      if (this.typeWorkLaying) {
+        var result = this.task.notes.reduce(function (sum, elem) {
+          return sum + elem.consumption;
+        }, 0);
+        return this.calcConsumptionToWork(result).toFixed(2);
+      } else {
+        var result = this.task.notes.reduce(function (sum, elem) {
+          return sum + elem.people;
+        }, 0);
+        return this.calcPeopleToWork(result).toFixed(2);
+      }
     },
     completedWorkDT() {
       if (this.task.notes.length == 0)
         return "----";
-      let needDays = Math.ceil((this.task.capacity - this.completedWork) / this.calcConsumptionToWork(this.task.notes[this.task.notes.length - 1].consumption));
+      let needDays = 1;
+      if (this.typeWorkLaying) {
+        needDays = Math.ceil((this.task.capacity - this.completedWork) / this.calcConsumptionToWork(this.task.notes[this.task.notes.length - 1].consumption));
+      } else {
+        needDays = Math.ceil((this.task.capacity - this.completedWork) / this.calcPeopleToWork(this.task.notes[this.task.notes.length - 1].people));
+      }
       return this.$moment().add(needDays, "days").format("YYYY-MM-DD");
     },
     taskStart() {
@@ -234,6 +262,14 @@ export default {
     },
     isFull() {
       return (parseFloat(this.completedWork) >= parseFloat(this.task.capacity));
+    },
+    deviation() {
+      for (let i = 0; i < this.task.notes.length; i++) {
+        if (this.task.notes[i].dt == this.date){
+           return (this.calcPeopleToWork(this.task.notes[i].people) - this.calcConsumptionToWork(this.task.notes[i].consumption)).toFixed(2);;
+        }
+      }
+      return 0;
     }
   },
   watch: {
@@ -494,6 +530,10 @@ export default {
 }
 .calendarWrap {
   margin-right: 20px;
+}
+.comment{
+  font-size: 8pt;
+  line-height: 10px;
 }
 </style>
 
