@@ -1,9 +1,14 @@
 ## About project
 
-This project is designed to manage employees.
+This project is a crm system for construction companies
 
 ### Main functions
-* Adding, editing, deleting employee profiles
-* Advanced search by employee data
+* Add, edit, delete users
+* Assign roles to users
+* Create construction objects
+* Сreate tasks, attach them to objects, set the amount of work and deadlines
+* Appoint performers
 
-Employee data includes fields such as information about the place of residence, information about relatives, about education, about places of previous work, hobbies and much more
+During work, performers daily indicate the amount of work performed. Managers keep track of work progress.
+The service allows you to predict the timing of work based on the speed of construction crews
+
