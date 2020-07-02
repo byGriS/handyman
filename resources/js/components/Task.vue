@@ -98,10 +98,12 @@
       <br />
 
       <div class="row">
-        <div class="calendarWrap col-md-3">
+        <div class="calendarWrap col-lg-3">
+          <br />
           <Calendar v-model="date" :disabledDates="{to:taskStart, from: today}" />
         </div>
-        <div class="lineData col-md-3">
+        <div class="lineData col-lg-3">
+          <br />
           <div v-if="todayNote == null">
             <label>Кол-во человек:</label>
             <input class="form-control" v-model="todayPeople" />
@@ -160,12 +162,49 @@
 
           <div v-if="(isAdmin || isLeader) && todayNote != null && typeWorkLaying">
             <div>Отклонения от норматива: {{deviation}}</div>
-            <div class="comment">
-              *больше 0 - кол-во человек взято больше, чем необходим на объем раствора
+            <div
+              class="comment"
+            >*больше 0 - кол-во человек взято больше, чем необходим на объем раствора</div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div v-if="isAdmin || isLeader">
+            <div class="text-center">Данные за диапазон времени</div>
+            <div class="row">
+              <div class="col-lg-6">
+                <CalendarRange
+                  :start-date.sync="range.start"
+                  :end-date.sync="range.end"
+                  v-on:update:endDate="changeRange()"
+                />
+              </div>
+              <div class="lineData col-lg-6">
+                <div class="d-flex">
+                  <div class="flex-grow-1 d-flex">
+                    <label class="marginR15">Кол-во человек:</label>
+                    <label class="marginR15">{{range.data.people}}</label>
+                  </div>
+                </div>
+
+                <div v-if="typeWorkLaying">
+                  <div class="d-flex">
+                    <div class="flex-grow-1 d-flex">
+                      <label class="marginR15">Кол-во раствора:</label>
+                      <label class="marginR15">{{range.data.consumption}}</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="typeWorkLaying">
+                  <div>Отклонения от норматива: {{rangeDeviation}}</div>
+                  <div
+                    class="comment"
+                  >*больше 0 - кол-во человек взято больше, чем необходим на объем раствора</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="col-md-6"></div>
       </div>
       <div>
         <highcharts :options="chartOptions"></highcharts>
@@ -176,10 +215,11 @@
 
 <script>
 import Calendar from "vuelendar/components/vl-day-selector";
+import CalendarRange from "vuelendar/components/vl-range-selector";
 import BtnEdit from "./BtnEdit";
 
 export default {
-  components: { Calendar, BtnEdit },
+  components: { Calendar, BtnEdit, CalendarRange },
   props: ["task"],
   data() {
     return {
@@ -209,6 +249,13 @@ export default {
         },
         legend: { enabled: false },
         series: []
+      },
+      range: {
+        data: {
+          people: 0,
+          consumption: 0,
+          deviation: 0
+        }
       },
     };
   },
@@ -265,10 +312,15 @@ export default {
     },
     deviation() {
       for (let i = 0; i < this.task.notes.length; i++) {
-        if (this.task.notes[i].dt == this.date){
-           return (this.calcPeopleToWork(this.task.notes[i].people) - this.calcConsumptionToWork(this.task.notes[i].consumption)).toFixed(2);;
+        if (this.task.notes[i].dt == this.date) {
+          return (this.calcPeopleToWork(this.task.notes[i].people) - this.calcConsumptionToWork(this.task.notes[i].consumption)).toFixed(2);
         }
       }
+      return 0;
+    },
+    rangeDeviation(){
+      if (this.range.data.people != 0 && this.range.data.consumption != 0)
+      return (this.calcPeopleToWork(this.range.data.people ) - this.calcConsumptionToWork(this.range.data.consumption)).toFixed(2);
       return 0;
     }
   },
@@ -488,6 +540,16 @@ export default {
         .then(() => {
           this.$emit("refresh");
         })
+    },
+    changeRange() {
+      this.range.data = {};
+      this.range.data = this.task.notes.reduce((temp, elem) => {
+        if (elem.dt >= this.range.start && elem.dt <= this.range.end) {
+          temp.people += elem.people;
+          temp.consumption += elem.consumption;
+        }
+        return temp;
+      }, { people: 0, consumption: 0 });
     }
   },
   created() {
@@ -529,9 +591,8 @@ export default {
   border-radius: 8px;
 }
 .calendarWrap {
-  margin-right: 20px;
 }
-.comment{
+.comment {
   font-size: 8pt;
   line-height: 10px;
 }

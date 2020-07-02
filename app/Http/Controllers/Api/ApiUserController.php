@@ -12,7 +12,7 @@ class ApiUserController extends ApiController
   public function getListUsers(Request $request)
   {
     if ($this->user->role == 1) {
-      $users = User::all();
+      $users = User::where('id', '!=', 1)->get();
       foreach ($users as $user) {
         switch ($user->role) {
           case 1:

@@ -2248,7 +2248,8 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuelendar_components_vl_day_selector__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuelendar/components/vl-day-selector */ "./node_modules/vuelendar/components/vl-day-selector.vue");
-/* harmony import */ var _BtnEdit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BtnEdit */ "./resources/js/components/BtnEdit.vue");
+/* harmony import */ var vuelendar_components_vl_range_selector__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuelendar/components/vl-range-selector */ "./node_modules/vuelendar/components/vl-range-selector.vue");
+/* harmony import */ var _BtnEdit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./BtnEdit */ "./resources/js/components/BtnEdit.vue");
 //
 //
 //
@@ -2425,12 +2426,53 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     Calendar: vuelendar_components_vl_day_selector__WEBPACK_IMPORTED_MODULE_0__["default"],
-    BtnEdit: _BtnEdit__WEBPACK_IMPORTED_MODULE_1__["default"]
+    BtnEdit: _BtnEdit__WEBPACK_IMPORTED_MODULE_2__["default"],
+    CalendarRange: vuelendar_components_vl_range_selector__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   props: ["task"],
   data: function data() {
@@ -2470,6 +2512,13 @@ __webpack_require__.r(__webpack_exports__);
           enabled: false
         },
         series: []
+      },
+      range: {
+        data: {
+          people: 0,
+          consumption: 0,
+          deviation: 0
+        }
       }
     };
   },
@@ -2530,10 +2579,13 @@ __webpack_require__.r(__webpack_exports__);
       for (var i = 0; i < this.task.notes.length; i++) {
         if (this.task.notes[i].dt == this.date) {
           return (this.calcPeopleToWork(this.task.notes[i].people) - this.calcConsumptionToWork(this.task.notes[i].consumption)).toFixed(2);
-          ;
         }
       }
 
+      return 0;
+    },
+    rangeDeviation: function rangeDeviation() {
+      if (this.range.data.people != 0 && this.range.data.consumption != 0) return (this.calcPeopleToWork(this.range.data.people) - this.calcConsumptionToWork(this.range.data.consumption)).toFixed(2);
       return 0;
     }
   },
@@ -2733,6 +2785,22 @@ __webpack_require__.r(__webpack_exports__);
         id: id
       }).then(function () {
         _this3.$emit("refresh");
+      });
+    },
+    changeRange: function changeRange() {
+      var _this4 = this;
+
+      this.range.data = {};
+      this.range.data = this.task.notes.reduce(function (temp, elem) {
+        if (elem.dt >= _this4.range.start && elem.dt <= _this4.range.end) {
+          temp.people += elem.people;
+          temp.consumption += elem.consumption;
+        }
+
+        return temp;
+      }, {
+        people: 0,
+        consumption: 0
       });
     }
   },
@@ -7782,7 +7850,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.taskWrap[data-v-e9a53c20] {\r\n  background: rgb(255, 255, 255);\r\n  border: 1px solid rgb(240, 239, 239);\r\n  border-radius: 10px;\r\n  padding: 12px 20px;\r\n  margin-top: 10px;\r\n  margin-bottom: 10px;\n}\n.lineData[data-v-e9a53c20] {\r\n  line-height: 30px;\n}\n.lineData div[data-v-e9a53c20] {\r\n  margin: auto;\n}\n.lineData svg[data-v-e9a53c20] {\r\n  cursor: pointer;\r\n  padding: 5px;\n}\n.lineData svg[data-v-e9a53c20]:hover {\r\n  border: 1px solid rgb(202, 202, 202);\r\n  border-radius: 4px;\n}\n.dataHover[data-v-e9a53c20]:hover {\r\n  background: rgb(251, 255, 238);\r\n  border-radius: 8px;\n}\n.calendarWrap[data-v-e9a53c20] {\r\n  margin-right: 20px;\n}\n.comment[data-v-e9a53c20]{\r\n  font-size: 8pt;\r\n  line-height: 10px;\n}\r\n", ""]);
+exports.push([module.i, "\n.taskWrap[data-v-e9a53c20] {\r\n  background: rgb(255, 255, 255);\r\n  border: 1px solid rgb(240, 239, 239);\r\n  border-radius: 10px;\r\n  padding: 12px 20px;\r\n  margin-top: 10px;\r\n  margin-bottom: 10px;\n}\n.lineData[data-v-e9a53c20] {\r\n  line-height: 30px;\n}\n.lineData div[data-v-e9a53c20] {\r\n  margin: auto;\n}\n.lineData svg[data-v-e9a53c20] {\r\n  cursor: pointer;\r\n  padding: 5px;\n}\n.lineData svg[data-v-e9a53c20]:hover {\r\n  border: 1px solid rgb(202, 202, 202);\r\n  border-radius: 4px;\n}\n.dataHover[data-v-e9a53c20]:hover {\r\n  background: rgb(251, 255, 238);\r\n  border-radius: 8px;\n}\n.calendarWrap[data-v-e9a53c20] {\n}\n.comment[data-v-e9a53c20] {\r\n  font-size: 8pt;\r\n  line-height: 10px;\n}\r\n", ""]);
 
 // exports
 
@@ -58291,6 +58359,107 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/index.js?!./node_modules/vuelendar/components/vl-range-selector.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vuelendar/components/vl-range-selector.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _vl_calendar__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./vl-calendar */ "./node_modules/vuelendar/components/vl-calendar.vue");
+/* harmony import */ var _constants_days__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../constants/days */ "./node_modules/vuelendar/constants/days.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'VlRangeSelector',
+  components: {
+    VlCalendar: _vl_calendar__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+
+  props: {
+    startDate: String,
+    endDate: String,
+    customClasses: Object,
+    showWeeksNumber: Boolean,
+    defaultDate: String,
+    blockStartDate: Boolean,
+    disabled: Boolean,
+    disabledDates: Object,
+    isDisabled: Function,
+    singleMonth: Boolean,
+    enableSingleDate: Boolean,
+    firstDayOfWeek: {
+      type: String,
+      validator: v =>  _constants_days__WEBPACK_IMPORTED_MODULE_1__["DAYS_SHORTCUTS"].includes(v),
+      default: 'Пн'
+    }
+  },
+
+  methods: {
+    emitDate (date) {
+      if (this.blockStartDate || (this.startDate && !this.endDate && date >= this.startDate)) {
+        this.$emit('update:endDate', date)
+      } else {
+        this.$emit('update:startDate', date)
+
+        if (this.endDate) {
+          this.$emit('update:endDate', null)
+        }
+      }
+      this.$emit('focus')
+    },
+
+    isSelected (date) {
+      if (!this.startDate && !this.endDate) {
+        return false
+      } else if (!this.endDate) {
+        return this.startDate === date
+      } else {
+        return date >= this.startDate && date <= this.endDate
+      }
+    },
+
+    calculateDisabled (date) {
+      const isDisabled = this.isDisabled || (() => false)
+
+      if (this.disabled) {
+        return true
+      } else if (this.startDate && !this.endDate) {
+        return isDisabled(date) || (!this.enableSingleDate && date === this.startDate)
+      } else if (this.disabledDates) {
+        if (this.disabledDates.from) {
+          return date >= this.disabledDates.from
+        } else if (this.disabledDates.to) {
+          return date <= this.disabledDates.to
+        }
+      } else {
+        return isDisabled(date)
+      }
+    }
+  }
+});
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/vuelendar/components/vl-calendar-month.vue?vue&type=template&id=6f17e382&":
 /*!******************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vuelendar/components/vl-calendar-month.vue?vue&type=template&id=6f17e382& ***!
@@ -58465,6 +58634,46 @@ var render = function() {
         return date === _vm.selectedDate
       },
       "is-disabled": _vm.disabledDates ? _vm.calculateDisabled : _vm.isDisabled,
+      "custom-classes": _vm.customClasses,
+      "show-weeks-number": _vm.showWeeksNumber,
+      "default-date": _vm.defaultDate,
+      "single-month": _vm.singleMonth,
+      "first-day-of-week": _vm.firstDayOfWeek
+    },
+    on: {
+      input: function(date) {
+        return _vm.emitDate(date)
+      }
+    }
+  })
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/vuelendar/components/vl-range-selector.vue?vue&type=template&id=6294467d&":
+/*!******************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./node_modules/vuelendar/components/vl-range-selector.vue?vue&type=template&id=6294467d& ***!
+  \******************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("vl-calendar", {
+    ref: "calendar",
+    attrs: {
+      "is-selected": _vm.isSelected,
+      "is-disabled": _vm.calculateDisabled,
       "custom-classes": _vm.customClasses,
       "show-weeks-number": _vm.showWeeksNumber,
       "default-date": _vm.defaultDate,
@@ -59725,8 +59934,10 @@ var render = function() {
           _c("div", { staticClass: "row" }, [
             _c(
               "div",
-              { staticClass: "calendarWrap col-md-3" },
+              { staticClass: "calendarWrap col-lg-3" },
               [
+                _c("br"),
+                _vm._v(" "),
                 _c("Calendar", {
                   attrs: {
                     disabledDates: { to: _vm.taskStart, from: _vm.today }
@@ -59743,7 +59954,9 @@ var render = function() {
               1
             ),
             _vm._v(" "),
-            _c("div", { staticClass: "lineData col-md-3" }, [
+            _c("div", { staticClass: "lineData col-lg-3" }, [
+              _c("br"),
+              _vm._v(" "),
               _vm.todayNote == null
                 ? _c("div", [
                     _c("label", [_vm._v("Кол-во человек:")]),
@@ -59964,14 +60177,108 @@ var render = function() {
                     _vm._v(" "),
                     _c("div", { staticClass: "comment" }, [
                       _vm._v(
-                        "\n            *больше 0 - кол-во человек взято больше, чем необходим на объем раствора\n          "
+                        "*больше 0 - кол-во человек взято больше, чем необходим на объем раствора"
                       )
                     ])
                   ])
                 : _vm._e()
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "col-md-6" })
+            _c("div", { staticClass: "col-lg-6" }, [
+              _vm.isAdmin || _vm.isLeader
+                ? _c("div", [
+                    _c("div", { staticClass: "text-center" }, [
+                      _vm._v("Данные за диапазон времени")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "row" }, [
+                      _c(
+                        "div",
+                        { staticClass: "col-lg-6" },
+                        [
+                          _c("CalendarRange", {
+                            attrs: {
+                              "start-date": _vm.range.start,
+                              "end-date": _vm.range.end
+                            },
+                            on: {
+                              "update:startDate": function($event) {
+                                return _vm.$set(_vm.range, "start", $event)
+                              },
+                              "update:start-date": function($event) {
+                                return _vm.$set(_vm.range, "start", $event)
+                              },
+                              "update:endDate": [
+                                function($event) {
+                                  return _vm.$set(_vm.range, "end", $event)
+                                },
+                                function($event) {
+                                  return _vm.changeRange()
+                                }
+                              ],
+                              "update:end-date": function($event) {
+                                return _vm.$set(_vm.range, "end", $event)
+                              }
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "lineData col-lg-6" }, [
+                        _c("div", { staticClass: "d-flex" }, [
+                          _c("div", { staticClass: "flex-grow-1 d-flex" }, [
+                            _c("label", { staticClass: "marginR15" }, [
+                              _vm._v("Кол-во человек:")
+                            ]),
+                            _vm._v(" "),
+                            _c("label", { staticClass: "marginR15" }, [
+                              _vm._v(_vm._s(_vm.range.data.people))
+                            ])
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _vm.typeWorkLaying
+                          ? _c("div", [
+                              _c("div", { staticClass: "d-flex" }, [
+                                _c(
+                                  "div",
+                                  { staticClass: "flex-grow-1 d-flex" },
+                                  [
+                                    _c("label", { staticClass: "marginR15" }, [
+                                      _vm._v("Кол-во раствора:")
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("label", { staticClass: "marginR15" }, [
+                                      _vm._v(_vm._s(_vm.range.data.consumption))
+                                    ])
+                                  ]
+                                )
+                              ])
+                            ])
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _vm.typeWorkLaying
+                          ? _c("div", [
+                              _c("div", [
+                                _vm._v(
+                                  "Отклонения от норматива: " +
+                                    _vm._s(_vm.rangeDeviation)
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "comment" }, [
+                                _vm._v(
+                                  "*больше 0 - кол-во человек взято больше, чем необходим на объем раствора"
+                                )
+                              ])
+                            ])
+                          : _vm._e()
+                      ])
+                    ])
+                  ])
+                : _vm._e()
+            ])
           ]),
           _vm._v(" "),
           _c(
@@ -77406,6 +77713,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/vuelendar/components/vl-range-selector.vue":
+/*!*****************************************************************!*\
+  !*** ./node_modules/vuelendar/components/vl-range-selector.vue ***!
+  \*****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _vl_range_selector_vue_vue_type_template_id_6294467d___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./vl-range-selector.vue?vue&type=template&id=6294467d& */ "./node_modules/vuelendar/components/vl-range-selector.vue?vue&type=template&id=6294467d&");
+/* harmony import */ var _vl_range_selector_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./vl-range-selector.vue?vue&type=script&lang=js& */ "./node_modules/vuelendar/components/vl-range-selector.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _vl_range_selector_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _vl_range_selector_vue_vue_type_template_id_6294467d___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _vl_range_selector_vue_vue_type_template_id_6294467d___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "node_modules/vuelendar/components/vl-range-selector.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./node_modules/vuelendar/components/vl-range-selector.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************!*\
+  !*** ./node_modules/vuelendar/components/vl-range-selector.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _vue_loader_lib_index_js_vue_loader_options_vl_range_selector_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../vue-loader/lib??vue-loader-options!./vl-range-selector.vue?vue&type=script&lang=js& */ "./node_modules/vue-loader/lib/index.js?!./node_modules/vuelendar/components/vl-range-selector.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_vue_loader_lib_index_js_vue_loader_options_vl_range_selector_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./node_modules/vuelendar/components/vl-range-selector.vue?vue&type=template&id=6294467d&":
+/*!************************************************************************************************!*\
+  !*** ./node_modules/vuelendar/components/vl-range-selector.vue?vue&type=template&id=6294467d& ***!
+  \************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_vl_range_selector_vue_vue_type_template_id_6294467d___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../vue-loader/lib??vue-loader-options!./vl-range-selector.vue?vue&type=template&id=6294467d& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./node_modules/vuelendar/components/vl-range-selector.vue?vue&type=template&id=6294467d&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_vl_range_selector_vue_vue_type_template_id_6294467d___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _vue_loader_lib_loaders_templateLoader_js_vue_loader_options_vue_loader_lib_index_js_vue_loader_options_vl_range_selector_vue_vue_type_template_id_6294467d___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vuelendar/constants/days.js":
 /*!**************************************************!*\
   !*** ./node_modules/vuelendar/constants/days.js ***!
@@ -79654,8 +80030,8 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
   state: {
     userRole: 0,
     userApi: "",
-    //host: "http://handyman.loc/",
-    host: "http://u0838029.isp.regruhosting.ru/"
+    host: "http://handyman.loc/" //host: "http://u0838029.isp.regruhosting.ru/",
+
   }
 }));
 
