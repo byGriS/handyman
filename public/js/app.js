@@ -2459,12 +2459,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
 
 
 
@@ -2578,14 +2572,14 @@ __webpack_require__.r(__webpack_exports__);
     deviation: function deviation() {
       for (var i = 0; i < this.task.notes.length; i++) {
         if (this.task.notes[i].dt == this.date) {
-          return (this.calcPeopleToWork(this.task.notes[i].people) - this.calcConsumptionToWork(this.task.notes[i].consumption)).toFixed(2);
+          return this.calcWorkToConsumption(this.calcPeopleToWork(this.task.notes[i].people)).toFixed(2);
         }
       }
 
       return 0;
     },
     rangeDeviation: function rangeDeviation() {
-      if (this.range.data.people != 0 && this.range.data.consumption != 0) return (this.calcPeopleToWork(this.range.data.people) - this.calcConsumptionToWork(this.range.data.consumption)).toFixed(2);
+      if (this.range.data.people != 0 && this.range.data.consumption != 0) return this.calcWorkToConsumption(this.calcPeopleToWork(this.range.data.people)).toFixed(2);
       return 0;
     }
   },
@@ -2670,6 +2664,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     calcPeopleToWork: function calcPeopleToWork(people) {
       return people * this.task.standartPeople;
+    },
+    calcWorkToConsumption: function calcWorkToConsumption(work) {
+      return work * this.task.standartConsumption;
     },
     editCapacity: function editCapacity() {
       if (!this.isEditCapacity) {
@@ -2795,6 +2792,7 @@ __webpack_require__.r(__webpack_exports__);
         if (elem.dt >= _this4.range.start && elem.dt <= _this4.range.end) {
           temp.people += elem.people;
           temp.consumption += elem.consumption;
+          console.log(temp.poeple, temp.consumption);
         }
 
         return temp;
@@ -2802,6 +2800,8 @@ __webpack_require__.r(__webpack_exports__);
         people: 0,
         consumption: 0
       });
+      this.range.data.people = this.range.data.people.toFixed(2);
+      this.range.data.consumption = this.range.data.consumption.toFixed(2);
     }
   },
   created: function created() {
@@ -60171,13 +60171,7 @@ var render = function() {
                 ? _c("div", [
                     _c("div", [
                       _vm._v(
-                        "Отклонения от норматива: " + _vm._s(_vm.deviation)
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "comment" }, [
-                      _vm._v(
-                        "*больше 0 - кол-во человек взято больше, чем необходим на объем раствора"
+                        "Кол-во раствора по нормативу: " + _vm._s(_vm.deviation)
                       )
                     ])
                   ])
@@ -60262,14 +60256,8 @@ var render = function() {
                           ? _c("div", [
                               _c("div", [
                                 _vm._v(
-                                  "Отклонения от норматива: " +
+                                  "Кол-во раствора по нормативу: " +
                                     _vm._s(_vm.rangeDeviation)
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c("div", { staticClass: "comment" }, [
-                                _vm._v(
-                                  "*больше 0 - кол-во человек взято больше, чем необходим на объем раствора"
                                 )
                               ])
                             ])

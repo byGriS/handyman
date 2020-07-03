@@ -161,10 +161,7 @@
           >Отправить данные</button>
 
           <div v-if="(isAdmin || isLeader) && todayNote != null && typeWorkLaying">
-            <div>Отклонения от норматива: {{deviation}}</div>
-            <div
-              class="comment"
-            >*больше 0 - кол-во человек взято больше, чем необходим на объем раствора</div>
+            <div>Кол-во раствора по нормативу: {{deviation}}</div>
           </div>
         </div>
         <div class="col-lg-6">
@@ -196,10 +193,7 @@
                 </div>
 
                 <div v-if="typeWorkLaying">
-                  <div>Отклонения от норматива: {{rangeDeviation}}</div>
-                  <div
-                    class="comment"
-                  >*больше 0 - кол-во человек взято больше, чем необходим на объем раствора</div>
+                  <div>Кол-во раствора по нормативу: {{rangeDeviation}}</div>
                 </div>
               </div>
             </div>
@@ -313,14 +307,15 @@ export default {
     deviation() {
       for (let i = 0; i < this.task.notes.length; i++) {
         if (this.task.notes[i].dt == this.date) {
-          return (this.calcPeopleToWork(this.task.notes[i].people) - this.calcConsumptionToWork(this.task.notes[i].consumption)).toFixed(2);
+          return (this.calcWorkToConsumption(this.calcPeopleToWork(this.task.notes[i].people))).toFixed(2);
         }
       }
       return 0;
     },
-    rangeDeviation(){
+    rangeDeviation() {
       if (this.range.data.people != 0 && this.range.data.consumption != 0)
-      return (this.calcPeopleToWork(this.range.data.people ) - this.calcConsumptionToWork(this.range.data.consumption)).toFixed(2);
+        return (this.calcWorkToConsumption(this.calcPeopleToWork(this.range.data.people))).toFixed(2);
+
       return 0;
     }
   },
@@ -405,6 +400,9 @@ export default {
     },
     calcPeopleToWork(people) {
       return people * this.task.standartPeople;
+    },
+    calcWorkToConsumption(work) {
+      return work * this.task.standartConsumption;
     },
     editCapacity() {
       if (!this.isEditCapacity) {
@@ -547,9 +545,12 @@ export default {
         if (elem.dt >= this.range.start && elem.dt <= this.range.end) {
           temp.people += elem.people;
           temp.consumption += elem.consumption;
+          console.log(temp.poeple, temp.consumption);
         }
         return temp;
       }, { people: 0, consumption: 0 });
+      this.range.data.people = this.range.data.people.toFixed(2);
+      this.range.data.consumption = this.range.data.consumption.toFixed(2);
     }
   },
   created() {
