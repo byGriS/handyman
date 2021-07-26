@@ -33,11 +33,27 @@ class IndexController extends Controller {
 
   public function telegram_notification() {
     $telegram = new \Telegram\Bot\Api(config('telegram.bots.mybot.token'));
+    $users = User::where('telegram_chat_id','!=',null)->get();
+    $works = Work::whereStatus(1)->get();
+    foreach ($works as $work) {
+      foreach ($work->tasks as $task) {
+        $note = $task->notes()->orderBy('dt', 'desc')->first();
+        $text = $work->name . PHP_EOL . 'Не указаны данные по работе';
+        if ($note->dt != date("Y-m-d")){
+          foreach($users as $user){
+            $telegram->setAsyncRequest(true)->sendMessage(['chat_id' => $user->telegram_chat_id, 'text' => $text]);
+          }
+        }else
+          dd("as");
+      };
+    }
+
+    /*$telegram = new \Telegram\Bot\Api(config('telegram.bots.mybot.token'));
     $text = 'Не выполнен норматив' . PHP_EOL .
       'Кол-во раствора по нормативу:' . $claim->location_entrance . ', использовано:' . $claim->location_floor;
     $chats = TelegramChats::all();
     foreach ($chats as $chat) {
       $telegram->setAsyncRequest(true)->sendMessage(['chat_id' => $chat->chat_id, 'text' => $text]);
-    }
+    }*/
   }
 }

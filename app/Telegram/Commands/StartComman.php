@@ -12,7 +12,7 @@ class StartCommand extends Command {
   protected $description = "Команда инициализации чата";
 
   public function handle() {
-    $this->replyWithMessage(['text' => 'Отправьте команду со своим номером телефон без первой 8 (в формате:'.PHP_EOL.'/user 9876543210)']);
+    $this->replyWithMessage(['text' => 'Отправьте команду со своим номером телефон без первой 8 (в формате: /user 9876543210)']);
     $this->replyWithChatAction(['action' => Actions::TYPING]);
   }
 }
