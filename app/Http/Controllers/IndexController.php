@@ -36,7 +36,6 @@ class IndexController extends Controller {
     $users = User::where('telegram_chat_id', '!=', null)->get();
     $works = Work::whereStatus(1)->get();
     foreach ($works as $work) {
-      $work = Work::find(22);
       foreach ($work->tasks as $task) {
         $note = $task->notes()->orderBy('dt', 'desc')->first();
         $text = $work->name . PHP_EOL . 'Не указаны данные по работе';
@@ -46,8 +45,8 @@ class IndexController extends Controller {
           }
         } else {
           $consumptionStandart = $note->people * $task->standartPeople * $task->standartConsumption;
-          if ($consumptionStandart < $note->consumption) {
-            $text = $work->name . PHP_EOL . 'Не выполнен норматив по раствору' . PHP_EOL . 'Кол-во человек:' . $note->people . ', Кол-во раствора:' . $note->consumption . ', Кол-во раствора по нормативу:' . $consumptionStandart;
+          if ($consumptionStandart > $note->consumption) {
+            $text = $work->name . PHP_EOL . 'Не выполнен норматив по раствору' . PHP_EOL . 'Кол-во человек: ' . $note->people. PHP_EOL . 'Кол-во раствора: ' . $note->consumption. PHP_EOL . 'Кол-во раствора по нормативу: ' . $consumptionStandart;
             foreach ($users as $user) {
               $telegram->setAsyncRequest(true)->sendMessage(['chat_id' => $user->telegram_chat_id, 'text' => $text]);
             }
@@ -55,13 +54,5 @@ class IndexController extends Controller {
         }
       }
     }
-
-    /*$telegram = new \Telegram\Bot\Api(config('telegram.bots.mybot.token'));
-    $text = 'Не выполнен норматив' . PHP_EOL .
-      'Кол-во раствора по нормативу:' . $claim->location_entrance . ', использовано:' . $claim->location_floor;
-    $chats = TelegramChats::all();
-    foreach ($chats as $chat) {
-      $telegram->setAsyncRequest(true)->sendMessage(['chat_id' => $chat->chat_id, 'text' => $text]);
-    }*/
   }
 }
