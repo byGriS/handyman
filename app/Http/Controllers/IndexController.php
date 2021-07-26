@@ -7,17 +7,15 @@ use App\Models\Work;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class IndexController extends Controller
-{
-  public function index()
-  {
+class IndexController extends Controller {
+  public function index() {
     if (Auth::check())
       return view('app')->with('user', Auth::user());
     else
       return view('auth.login');
   }
 
-  public function test(){
+  public function test() {
     $valid = User::where('phone', '9876543210')->first();
     $valid->password = Hash::make('123123');
     $valid->save();
@@ -26,9 +24,20 @@ class IndexController extends Controller
     dd($tasks[0]->user);
   }
 
-  public function telegram_message_webhook(){
+  public function telegram_message_webhook() {
     $telegram = new \Telegram\Bot\Api(config('telegram.bots.mybot.token'));
     $telegram->addCommand(\App\Telegram\Commands\StartCommand::class);
-    $commandsHandler = $telegram->commandsHandler(true);    
+    $telegram->addCommand(\App\Telegram\Commands\UserCommand::class);
+    $commandsHandler = $telegram->commandsHandler(true);
+  }
+
+  public function telegram_notification() {
+    $telegram = new \Telegram\Bot\Api(config('telegram.bots.mybot.token'));
+    $text = 'Не выполнен норматив' . PHP_EOL .
+      'Кол-во раствора по нормативу:' . $claim->location_entrance . ', использовано:' . $claim->location_floor;
+    $chats = TelegramChats::all();
+    foreach ($chats as $chat) {
+      $telegram->setAsyncRequest(true)->sendMessage(['chat_id' => $chat->chat_id, 'text' => $text]);
+    }
   }
 }

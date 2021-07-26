@@ -23,7 +23,8 @@ Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::get('/test', 'IndexController@test');
 
+Route::post('/1896948525:AAHcOXKulESgNKRNZq1_CJvQ3HAsYremVEU/webhook',  'IndexController@telegram_message_webhook');
+Route::get('/telegram_notification', 'IndexController@telegram_notification');
+
 Route::get('/{any}', 'IndexController@index')->where('any', '.*');
 
-
-Route::post('/1896948525:AAHcOXKulESgNKRNZq1_CJvQ3HAsYremVEU/webhook',  'App\Http\Controllers\IndexController@telegram_message_webhook');
