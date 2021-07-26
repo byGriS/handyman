@@ -25,3 +25,5 @@ Route::get('/test', 'IndexController@test');
 
 Route::get('/{any}', 'IndexController@index')->where('any', '.*');
 
+
+Route::post('/1896948525:AAHcOXKulESgNKRNZq1_CJvQ3HAsYremVEU/webhook',  'App\Http\Controllers\IndexController@telegram_message_webhook');

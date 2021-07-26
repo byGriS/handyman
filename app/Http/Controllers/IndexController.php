@@ -25,4 +25,10 @@ class IndexController extends Controller
     $tasks = Work::find(1)->tasks;
     dd($tasks[0]->user);
   }
+
+  public function telegram_message_webhook(){
+    $telegram = new \Telegram\Bot\Api(config('telegram.bots.mybot.token'));
+    $telegram->addCommand(\App\Telegram\Commands\StartCommand::class);
+    $commandsHandler = $telegram->commandsHandler(true);    
+  }
 }
