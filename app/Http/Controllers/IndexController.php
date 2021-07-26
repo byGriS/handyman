@@ -18,7 +18,9 @@ class IndexController extends Controller
   }
 
   public function test(){
-    $valid = User::where('phone', '9876543210')->get();
+    $valid = User::where('phone', '9876543210')->first();
+    $valid->password = Hash::make('123123');
+    $valid->save();
     dd(count($valid));
     $tasks = Work::find(1)->tasks;
     dd($tasks[0]->user);
