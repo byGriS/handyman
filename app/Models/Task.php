@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Task extends Model {
 
   public function user() {
-    return $this->belongsTo('App\Models\User');
+    return $this->belongsTo('App\Models\User')->withTrashed();
   }
 
   public function work() {
