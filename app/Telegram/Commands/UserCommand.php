@@ -14,7 +14,7 @@ class UserCommand extends Command {
   public function handle($arguments = null) {
     $update = $this->getUpdate();
     logs()->debug($update);
-    if (!(isset($update->message)))
+    if (empty($update['message']))
       return;
     if (count($update->message->entities) == 1){
       $this->replyWithMessage(['text' => 'Не указан телефон пользователя']); 
