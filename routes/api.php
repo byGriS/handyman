@@ -29,6 +29,7 @@ Route::namespace('Api')->group(function () {
   Route::get('getListTasks', 'ApiWorkController@getListTasks');
   Route::get('getListTasksByUser', 'ApiWorkController@getListTasksByUser');
   Route::post('changeTaskCapacity', 'ApiWorkController@changeTaskCapacity');
+  Route::post('changeTaskUser', 'ApiWorkController@changeTaskUser');
   Route::post('changeTaskEnd', 'ApiWorkController@changeTaskEnd');
   Route::post('changeTaskStandartPeople', 'ApiWorkController@changeTaskStandartPeople');
   Route::post('changeTaskStandartConsumption', 'ApiWorkController@changeTaskStandartConsumption');

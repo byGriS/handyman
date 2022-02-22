@@ -2459,6 +2459,52 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2476,6 +2522,7 @@ __webpack_require__.r(__webpack_exports__);
       todayConsumption: 0,
       date: null,
       today: null,
+      isEditUser: false,
       isEditCapacity: false,
       isEditEnd: false,
       isEditStandartPeople: false,
@@ -2513,7 +2560,8 @@ __webpack_require__.r(__webpack_exports__);
           consumption: 0,
           deviation: 0
         }
-      }
+      },
+      handymans: []
     };
   },
   computed: {
@@ -2668,6 +2716,19 @@ __webpack_require__.r(__webpack_exports__);
     calcWorkToConsumption: function calcWorkToConsumption(work) {
       return work * this.task.standartConsumption;
     },
+    editUser: function editUser() {
+      if (!this.isEditUser) {
+        this.isEditUser = true;
+      } else {
+        this.$http.post(this.$store.state.host + "api/changeTaskUser", {
+          api_token: this.$store.state.userApi,
+          task_id: this.task.id,
+          user_id: this.task.user.id
+        }).then(function (response) {
+          this.isEditCapacity = false;
+        });
+      }
+    },
     editCapacity: function editCapacity() {
       if (!this.isEditCapacity) {
         this.isEditCapacity = true;
@@ -2802,6 +2863,15 @@ __webpack_require__.r(__webpack_exports__);
       });
       this.range.data.people = this.range.data.people.toFixed(2);
       this.range.data.consumption = this.range.data.consumption.toFixed(2);
+    },
+    getListHandymans: function getListHandymans() {
+      this.$http.get(this.$store.state.host + "api/getListHandymans", {
+        params: {
+          api_token: this.$store.state.userApi
+        }
+      }).then(function (response) {
+        this.handymans = response.data;
+      });
     }
   },
   created: function created() {
@@ -2811,6 +2881,7 @@ __webpack_require__.r(__webpack_exports__);
     this.chartOptions.xAxis.max = this.$moment(this.task.end).valueOf();
     this.checkTodayNote();
     this.fillGraph();
+    this.getListHandymans();
   }
 });
 
@@ -59588,7 +59659,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("Восстановить работу")]
+                    [_vm._v("\n          Восстановить работу\n        ")]
                   )
                 : _vm._e()
             ])
@@ -59610,7 +59681,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("Завершить работу")]
+                    [_vm._v("\n          Завершить работу\n        ")]
                   )
                 : _vm._e(),
               _vm._v(" "),
@@ -59625,7 +59696,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("Удалить работу")]
+                    [_vm._v("\n          Удалить работу\n        ")]
                   )
                 : _vm._e()
             ])
@@ -59634,9 +59705,85 @@ var render = function() {
           _c("div", { staticClass: "row lineData" }, [
             _c("div", { staticClass: "col-md-3" }, [_vm._v("Исполнитель")]),
             _vm._v(" "),
-            _c("div", { staticClass: "col-md-3" }, [
-              _vm._v(_vm._s(_vm.task.user.name))
-            ]),
+            _vm.isEditUser
+              ? _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.task.user,
+                          expression: "task.user"
+                        }
+                      ],
+                      staticClass: "form-control form-control-sm",
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.task,
+                            "user",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
+                      }
+                    },
+                    _vm._l(_vm.handymans, function(handyman) {
+                      return _c(
+                        "option",
+                        { key: handyman.id, domProps: { value: handyman } },
+                        [_vm._v(_vm._s(handyman.name))]
+                      )
+                    }),
+                    0
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-sm btn-primary",
+                      on: {
+                        click: function($event) {
+                          return _vm.editUser()
+                        }
+                      }
+                    },
+                    [_vm._v("Ок")]
+                  )
+                ])
+              : _c("div", { staticClass: "col-md-3 d-flex" }, [
+                  _c("div", { staticClass: "flex-grow-1" }, [
+                    _vm._v(
+                      "\n          " + _vm._s(_vm.task.user.name) + "\n        "
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _vm.isAdmin
+                    ? _c(
+                        "div",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.editUser()
+                            }
+                          }
+                        },
+                        [_c("BtnEdit")],
+                        1
+                      )
+                    : _vm._e()
+                ]),
             _vm._v(" "),
             _c("div", { staticClass: "col-md-3" }, [_vm._v("Тип работ")]),
             _vm._v(" "),
@@ -59661,7 +59808,7 @@ var render = function() {
                         expression: "task.capacity"
                       }
                     ],
-                    staticClass: "form-control",
+                    staticClass: "form-control form-control-sm",
                     domProps: { value: _vm.task.capacity },
                     on: {
                       input: function($event) {
@@ -59676,7 +59823,7 @@ var render = function() {
                   _c(
                     "button",
                     {
-                      staticClass: "btn btn-primary",
+                      staticClass: "btn btn-sm btn-primary",
                       on: {
                         click: function($event) {
                           return _vm.editCapacity()
@@ -59732,7 +59879,7 @@ var render = function() {
                         expression: "task.end"
                       }
                     ],
-                    staticClass: "form-control",
+                    staticClass: "form-control form-control-sm",
                     attrs: { type: "date" },
                     domProps: { value: _vm.task.end },
                     on: {
@@ -59748,7 +59895,7 @@ var render = function() {
                   _c(
                     "button",
                     {
-                      staticClass: "btn btn-primary",
+                      staticClass: "btn btn-sm btn-primary",
                       on: {
                         click: function($event) {
                           return _vm.editEnd()
@@ -59805,7 +59952,7 @@ var render = function() {
                             expression: "task.standartPeople"
                           }
                         ],
-                        staticClass: "form-control",
+                        staticClass: "form-control form-control-sm",
                         domProps: { value: _vm.task.standartPeople },
                         on: {
                           input: function($event) {
@@ -59824,14 +59971,14 @@ var render = function() {
                       _c(
                         "button",
                         {
-                          staticClass: "btn btn-primary",
+                          staticClass: "btn btn-sm btn-primary",
                           on: {
                             click: function($event) {
                               return _vm.editStandartPeople()
                             }
                           }
                         },
-                        [_vm._v("Ок")]
+                        [_vm._v("\n          Ок\n        ")]
                       )
                     ])
                   : _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
@@ -59876,7 +60023,7 @@ var render = function() {
                             expression: "task.standartConsumption"
                           }
                         ],
-                        staticClass: "form-control",
+                        staticClass: "form-control form-control-sm",
                         domProps: { value: _vm.task.standartConsumption },
                         on: {
                           input: function($event) {
@@ -59895,14 +60042,14 @@ var render = function() {
                       _c(
                         "button",
                         {
-                          staticClass: "btn btn-primary",
+                          staticClass: "btn btn-sm btn-primary",
                           on: {
                             click: function($event) {
                               return _vm.editStandartConsumption()
                             }
                           }
                         },
-                        [_vm._v("Ок")]
+                        [_vm._v("\n          Ок\n        ")]
                       )
                     ])
                   : _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
@@ -59971,7 +60118,7 @@ var render = function() {
                           expression: "todayPeople"
                         }
                       ],
-                      staticClass: "form-control",
+                      staticClass: "form-control form-control-sm",
                       domProps: { value: _vm.todayPeople },
                       on: {
                         input: function($event) {
@@ -60011,7 +60158,8 @@ var render = function() {
                                   expression: "todayNote.people"
                                 }
                               ],
-                              staticClass: "width50 form-control",
+                              staticClass:
+                                "width50 form-control form-control-sm",
                               domProps: { value: _vm.todayNote.people },
                               on: {
                                 input: function($event) {
@@ -60045,7 +60193,7 @@ var render = function() {
                               : _c("div", [
                                   _c(
                                     "button",
-                                    { staticClass: "btn btn-primary" },
+                                    { staticClass: "btn btn-sm btn-primary" },
                                     [_vm._v("Ок")]
                                   )
                                 ])
@@ -60069,7 +60217,7 @@ var render = function() {
                                 expression: "todayConsumption"
                               }
                             ],
-                            staticClass: "form-control",
+                            staticClass: "form-control form-control-sm",
                             domProps: { value: _vm.todayConsumption },
                             on: {
                               input: function($event) {
@@ -60109,7 +60257,8 @@ var render = function() {
                                         expression: "todayConsumption"
                                       }
                                     ],
-                                    staticClass: "width50 form-control",
+                                    staticClass:
+                                      "width50 form-control form-control-sm",
                                     domProps: { value: _vm.todayConsumption },
                                     on: {
                                       input: function($event) {
@@ -60162,7 +60311,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("Отправить данные")]
+                    [_vm._v("\n          Отправить данные\n        ")]
                   )
                 : _vm._e(),
               _vm._v(" "),
@@ -80044,8 +80193,8 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\OpenServer\domains\handyman.loc\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\OpenServer\domains\handyman.loc\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\OpenServer\domains\handyman\www\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! D:\OpenServer\domains\handyman\www\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ }),

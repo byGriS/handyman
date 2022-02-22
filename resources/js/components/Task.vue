@@ -2,78 +2,103 @@
   <div class="taskWrap">
     <div v-if="task.status == 2">
       <div class="row">
-        <div class="col-md-2 vAlign">{{task.work.name}}</div>
-        <div class="col-md-2 vAlign text-center">{{task.user.name}}</div>
-        <div class="col-md-2 vAlign text-center">{{task.capacity}}</div>
-        <div class="col-md-2 vAlign text-center">{{task.updated_at}}</div>
+        <div class="col-md-2 vAlign">{{ task.work.name }}</div>
+        <div class="col-md-2 vAlign text-center">{{ task.user.name }}</div>
+        <div class="col-md-2 vAlign text-center">{{ task.capacity }}</div>
+        <div class="col-md-2 vAlign text-center">{{ task.updated_at }}</div>
         <div class="col-md-4 text-center">
           <button
             v-if="this.$store.state.userRole == 1"
             class="btn btn-primary"
             @click="restoreTask(task.id)"
-          >Восстановить работу</button>
+          >
+            Восстановить работу
+          </button>
         </div>
       </div>
     </div>
     <div v-else>
       <div class="d-flex justify-content-between">
-        <h3>{{task.work.name}}</h3>
+        <h3>{{ task.work.name }}</h3>
         <div>
           <button
             v-if="isAdmin && isFull"
             class="btn btn-success"
             @click="completeTask()"
-          >Завершить работу</button>
-          <button v-if="isAdmin" class="btn btn-danger" @click="deleteTask()">Удалить работу</button>
+          >
+            Завершить работу
+          </button>
+          <button v-if="isAdmin" class="btn btn-danger" @click="deleteTask()">
+            Удалить работу
+          </button>
         </div>
       </div>
       <div class="row lineData">
         <div class="col-md-3">Исполнитель</div>
-        <div class="col-md-3">{{task.user.name}}</div>
+        <div v-if="isEditUser" class="col-md-3 d-flex dataHover">
+          <select class="form-control form-control-sm" v-model="task.user">
+              <option
+                v-for="handyman in handymans"
+                :key="handyman.id"
+                :value="handyman"
+              >{{handyman.name}}</option>
+            </select>
+          <button class="btn btn-sm btn-primary" @click="editUser()">Ок</button>
+        </div>
+        <div v-else class="col-md-3 d-flex">
+          <div class="flex-grow-1">
+            {{ task.user.name }}
+          </div>
+          <div v-if="isAdmin" @click="editUser()">
+            <BtnEdit />
+          </div>
+        </div>
         <div class="col-md-3">Тип работ</div>
-        <div class="col-md-3">{{typeWork}}</div>
+        <div class="col-md-3">{{ typeWork }}</div>
       </div>
 
       <div class="row lineData">
         <div class="col-md-3">Необходимый объем работ</div>
         <div v-if="isEditCapacity" class="col-md-3 d-flex dataHover">
-          <input class="form-control" v-model="task.capacity" />
-          <button class="btn btn-primary" @click="editCapacity()">Ок</button>
+          <input class="form-control form-control-sm" v-model="task.capacity" />
+          <button class="btn btn-sm btn-primary" @click="editCapacity()">Ок</button>
         </div>
         <div v-else class="col-md-3 d-flex dataHover">
-          <div class="flex-grow-1">{{task.capacity}}</div>
+          <div class="flex-grow-1">{{ task.capacity }}</div>
           <div v-if="isAdmin" @click="editCapacity()">
             <BtnEdit />
           </div>
         </div>
         <div class="col-md-3">Выполненный объем работ</div>
-        <div class="col-md-3">{{completedWork}}</div>
+        <div class="col-md-3">{{ completedWork }}</div>
       </div>
 
       <div class="row lineData">
         <div class="col-md-3">Планируемая дата окончания работ</div>
         <div v-if="isEditEnd" class="col-md-3 d-flex dataHover">
-          <input class="form-control" type="date" v-model="task.end" />
-          <button class="btn btn-primary" @click="editEnd()">Ок</button>
+          <input class="form-control form-control-sm" type="date" v-model="task.end" />
+          <button class="btn btn-sm btn-primary" @click="editEnd()">Ок</button>
         </div>
         <div v-else class="col-md-3 d-flex dataHover">
-          <div class="flex-grow-1">{{task.end}}</div>
+          <div class="flex-grow-1">{{ task.end }}</div>
           <div v-if="isAdmin" @click="editEnd()">
             <BtnEdit />
           </div>
         </div>
         <div class="col-md-3">Расчетная дата окончания работ</div>
-        <div class="col-md-3">{{completedWorkDT}}</div>
+        <div class="col-md-3">{{ completedWorkDT }}</div>
       </div>
 
       <div v-if="isAdmin || isLeader" class="row lineData">
         <div class="col-md-3">Норматив объем работ/чел/сут</div>
         <div v-if="isEditStandartPeople" class="col-md-3 d-flex dataHover">
-          <input class="form-control" v-model="task.standartPeople" />
-          <button class="btn btn-primary" @click="editStandartPeople()">Ок</button>
+          <input class="form-control form-control-sm" v-model="task.standartPeople" />
+          <button class="btn btn-sm btn-primary" @click="editStandartPeople()">
+            Ок
+          </button>
         </div>
         <div v-else class="col-md-3 d-flex dataHover">
-          <div class="flex-grow-1">{{task.standartPeople}}</div>
+          <div class="flex-grow-1">{{ task.standartPeople }}</div>
           <div v-if="isAdmin" @click="editStandartPeople()">
             <BtnEdit />
           </div>
@@ -83,11 +108,13 @@
       <div v-if="(isAdmin || isLeader) && typeWorkLaying" class="row lineData">
         <div class="col-md-3">Норматив раствор/объем работ</div>
         <div v-if="isEditStandartConsumption" class="col-md-3 d-flex dataHover">
-          <input class="form-control" v-model="task.standartConsumption" />
-          <button class="btn btn-primary" @click="editStandartConsumption()">Ок</button>
+          <input class="form-control form-control-sm" v-model="task.standartConsumption" />
+          <button class="btn btn-sm btn-primary" @click="editStandartConsumption()">
+            Ок
+          </button>
         </div>
         <div v-else class="col-md-3 d-flex dataHover">
-          <div class="flex-grow-1">{{task.standartConsumption}}</div>
+          <div class="flex-grow-1">{{ task.standartConsumption }}</div>
           <div v-if="isAdmin" @click="editStandartConsumption()">
             <BtnEdit />
           </div>
@@ -100,22 +127,30 @@
       <div class="row">
         <div class="calendarWrap col-lg-3">
           <br />
-          <Calendar v-model="date" :disabledDates="{to:taskStart, from: today}" />
+          <Calendar
+            v-model="date"
+            :disabledDates="{ to: taskStart, from: today }"
+          />
         </div>
         <div class="lineData col-lg-3">
           <br />
           <div v-if="todayNote == null">
             <label>Кол-во человек:</label>
-            <input class="form-control" v-model="todayPeople" />
+            <input class="form-control form-control-sm" v-model="todayPeople" />
           </div>
           <div v-else class="d-flex">
             <div class="flex-grow-1 d-flex">
               <label class="marginR15">Кол-во человек:</label>
               <div v-if="!isEditTodayPeople">
-                <label class="marginR15">{{(todayNote != null) ? todayNote.people : ''}}</label>
+                <label class="marginR15">{{
+                  todayNote != null ? todayNote.people : ""
+                }}</label>
               </div>
               <div v-else>
-                <input class="width50 form-control" v-model="todayNote.people" />
+                <input
+                  class="width50 form-control form-control-sm"
+                  v-model="todayNote.people"
+                />
               </div>
             </div>
             <div v-if="isAdmin" @click="editTodayPeople()">
@@ -123,7 +158,7 @@
                 <BtnEdit />
               </div>
               <div v-else>
-                <button class="btn btn-primary">Ок</button>
+                <button class="btn btn-sm btn-primary">Ок</button>
               </div>
             </div>
           </div>
@@ -131,16 +166,21 @@
           <div v-if="typeWorkLaying">
             <div v-if="todayNote == null">
               <label>Кол-во раствора:</label>
-              <input class="form-control" v-model="todayConsumption" />
+              <input class="form-control form-control-sm" v-model="todayConsumption" />
             </div>
             <div v-else class="d-flex">
               <div class="flex-grow-1 d-flex">
                 <label class="marginR15">Кол-во раствора:</label>
                 <div v-if="!isEditTodayConsumption">
-                  <label class="marginR15">{{(todayNote != null) ? todayNote.consumption : ''}}</label>
+                  <label class="marginR15">{{
+                    todayNote != null ? todayNote.consumption : ""
+                  }}</label>
                 </div>
                 <div v-else>
-                  <input class="width50 form-control" v-model="todayConsumption" />
+                  <input
+                    class="width50 form-control form-control-sm"
+                    v-model="todayConsumption"
+                  />
                 </div>
               </div>
               <div v-if="isAdmin" @click="editTodayConsumption()">
@@ -158,10 +198,14 @@
             v-if="todayNote == null"
             class="btn btn-primary marginT15"
             @click="sendNote()"
-          >Отправить данные</button>
+          >
+            Отправить данные
+          </button>
 
-          <div v-if="(isAdmin || isLeader) && todayNote != null && typeWorkLaying">
-            <div>Кол-во раствора по нормативу: {{deviation}}</div>
+          <div
+            v-if="(isAdmin || isLeader) && todayNote != null && typeWorkLaying"
+          >
+            <div>Кол-во раствора по нормативу: {{ deviation }}</div>
           </div>
         </div>
         <div class="col-lg-6">
@@ -179,7 +223,7 @@
                 <div class="d-flex">
                   <div class="flex-grow-1 d-flex">
                     <label class="marginR15">Кол-во человек:</label>
-                    <label class="marginR15">{{range.data.people}}</label>
+                    <label class="marginR15">{{ range.data.people }}</label>
                   </div>
                 </div>
 
@@ -187,13 +231,15 @@
                   <div class="d-flex">
                     <div class="flex-grow-1 d-flex">
                       <label class="marginR15">Кол-во раствора:</label>
-                      <label class="marginR15">{{range.data.consumption}}</label>
+                      <label class="marginR15">{{
+                        range.data.consumption
+                      }}</label>
                     </div>
                   </div>
                 </div>
 
                 <div v-if="typeWorkLaying">
-                  <div>Кол-во раствора по нормативу: {{rangeDeviation}}</div>
+                  <div>Кол-во раствора по нормативу: {{ rangeDeviation }}</div>
                 </div>
               </div>
             </div>
@@ -222,6 +268,7 @@ export default {
       todayConsumption: 0,
       date: null,
       today: null,
+      isEditUser: false,
       isEditCapacity: false,
       isEditEnd: false,
       isEditStandartPeople: false,
@@ -251,6 +298,7 @@ export default {
           deviation: 0
         }
       },
+      handymans: []
     };
   },
   computed: {
@@ -404,6 +452,21 @@ export default {
     calcWorkToConsumption(work) {
       return work * this.task.standartConsumption;
     },
+    editUser(){
+      if (!this.isEditUser) {
+        this.isEditUser = true;
+      } else {
+        this.$http
+          .post(this.$store.state.host + "api/changeTaskUser", {
+            api_token: this.$store.state.userApi,
+            task_id: this.task.id,
+            user_id: this.task.user.id
+          })
+          .then(function (response) {
+            this.isEditCapacity = false;
+          });
+      }
+    },
     editCapacity() {
       if (!this.isEditCapacity) {
         this.isEditCapacity = true;
@@ -551,7 +614,18 @@ export default {
       }, { people: 0, consumption: 0 });
       this.range.data.people = this.range.data.people.toFixed(2);
       this.range.data.consumption = this.range.data.consumption.toFixed(2);
-    }
+    },
+    getListHandymans() {
+      this.$http
+        .get(this.$store.state.host + "api/getListHandymans", {
+          params: {
+            api_token: this.$store.state.userApi,
+          }
+        })
+        .then(function (response) {
+          this.handymans = response.data;
+        });
+    },
   },
   created() {
     this.date = this.$moment().format("YYYY-MM-DD");
@@ -560,6 +634,7 @@ export default {
     this.chartOptions.xAxis.max = this.$moment(this.task.end).valueOf();
     this.checkTodayNote();
     this.fillGraph();
+    this.getListHandymans();
   }
 };
 </script>
