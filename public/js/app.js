@@ -2725,7 +2725,7 @@ __webpack_require__.r(__webpack_exports__);
           task_id: this.task.id,
           user_id: this.task.user.id
         }).then(function (response) {
-          this.isEditCapacity = false;
+          this.isEditUser = false;
         });
       }
     },

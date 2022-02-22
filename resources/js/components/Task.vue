@@ -463,7 +463,7 @@ export default {
             user_id: this.task.user.id
           })
           .then(function (response) {
-            this.isEditCapacity = false;
+            this.isEditUser = false;
           });
       }
     },
