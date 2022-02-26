@@ -37,12 +37,14 @@
         <div class="col-md-3">Исполнитель</div>
         <div v-if="isEditUser" class="col-md-3 d-flex dataHover">
           <select class="form-control form-control-sm" v-model="task.user">
-              <option
-                v-for="handyman in handymans"
-                :key="handyman.id"
-                :value="handyman"
-              >{{handyman.name}}</option>
-            </select>
+            <option
+              v-for="handyman in handymans"
+              :key="handyman.id"
+              :value="handyman"
+            >
+              {{ handyman.name }}
+            </option>
+          </select>
           <button class="btn btn-sm btn-primary" @click="editUser()">Ок</button>
         </div>
         <div v-else class="col-md-3 d-flex">
@@ -61,7 +63,9 @@
         <div class="col-md-3">Необходимый объем работ</div>
         <div v-if="isEditCapacity" class="col-md-3 d-flex dataHover">
           <input class="form-control form-control-sm" v-model="task.capacity" />
-          <button class="btn btn-sm btn-primary" @click="editCapacity()">Ок</button>
+          <button class="btn btn-sm btn-primary" @click="editCapacity()">
+            Ок
+          </button>
         </div>
         <div v-else class="col-md-3 d-flex dataHover">
           <div class="flex-grow-1">{{ task.capacity }}</div>
@@ -76,7 +80,11 @@
       <div class="row lineData">
         <div class="col-md-3">Планируемая дата окончания работ</div>
         <div v-if="isEditEnd" class="col-md-3 d-flex dataHover">
-          <input class="form-control form-control-sm" type="date" v-model="task.end" />
+          <input
+            class="form-control form-control-sm"
+            type="date"
+            v-model="task.end"
+          />
           <button class="btn btn-sm btn-primary" @click="editEnd()">Ок</button>
         </div>
         <div v-else class="col-md-3 d-flex dataHover">
@@ -89,10 +97,13 @@
         <div class="col-md-3">{{ completedWorkDT }}</div>
       </div>
 
-      <div v-if="isAdmin || isLeader" class="row lineData">
+      <div v-if="(isAdmin || isLeader) && typeWorkLaying" class="row lineData">
         <div class="col-md-3">Норматив объем работ/чел/сут</div>
         <div v-if="isEditStandartPeople" class="col-md-3 d-flex dataHover">
-          <input class="form-control form-control-sm" v-model="task.standartPeople" />
+          <input
+            class="form-control form-control-sm"
+            v-model="task.standartPeople"
+          />
           <button class="btn btn-sm btn-primary" @click="editStandartPeople()">
             Ок
           </button>
@@ -105,11 +116,20 @@
         </div>
         <div class="col-md-6" />
       </div>
-      <div v-if="(isAdmin || isLeader) && typeWorkLaying" class="row lineData">
-        <div class="col-md-3">Норматив раствор/объем работ</div>
+      <div v-if="isAdmin || isLeader" class="row lineData">
+        <div class="col-md-3" v-if="typeWorkLaying">
+          Норматив раствор/объем работ
+        </div>
+        <div class="col-md-3" v-else>Норматив материала/объем работ</div>
         <div v-if="isEditStandartConsumption" class="col-md-3 d-flex dataHover">
-          <input class="form-control form-control-sm" v-model="task.standartConsumption" />
-          <button class="btn btn-sm btn-primary" @click="editStandartConsumption()">
+          <input
+            class="form-control form-control-sm"
+            v-model="task.standartConsumption"
+          />
+          <button
+            class="btn btn-sm btn-primary"
+            @click="editStandartConsumption()"
+          >
             Ок
           </button>
         </div>
@@ -134,43 +154,56 @@
         </div>
         <div class="lineData col-lg-3">
           <br />
-          <div v-if="todayNote == null">
-            <label>Кол-во человек:</label>
-            <input class="form-control form-control-sm" v-model="todayPeople" />
-          </div>
-          <div v-else class="d-flex">
-            <div class="flex-grow-1 d-flex">
-              <label class="marginR15">Кол-во человек:</label>
-              <div v-if="!isEditTodayPeople">
-                <label class="marginR15">{{
-                  todayNote != null ? todayNote.people : ""
-                }}</label>
-              </div>
-              <div v-else>
-                <input
-                  class="width50 form-control form-control-sm"
-                  v-model="todayNote.people"
-                />
-              </div>
+
+          <div v-if="typeWorkLaying">
+            <div v-if="todayNote == null">
+              <label>Кол-во человек:</label>
+              <input
+                class="form-control form-control-sm"
+                v-model="todayPeople"
+              />
             </div>
-            <div v-if="isAdmin" @click="editTodayPeople()">
-              <div v-if="!isEditTodayPeople">
-                <BtnEdit />
+            <div v-else class="d-flex">
+              <div class="flex-grow-1 d-flex">
+                <label class="marginR15">Кол-во человек:</label>
+                <div v-if="!isEditTodayPeople">
+                  <label class="marginR15">{{
+                    todayNote != null ? todayNote.people : ""
+                  }}</label>
+                </div>
+                <div v-else>
+                  <input
+                    class="width50 form-control form-control-sm"
+                    v-model="todayNote.people"
+                  />
+                </div>
               </div>
-              <div v-else>
-                <button class="btn btn-sm btn-primary">Ок</button>
+              <div v-if="isAdmin" @click="editTodayPeople()">
+                <div v-if="!isEditTodayPeople">
+                  <BtnEdit />
+                </div>
+                <div v-else>
+                  <button class="btn btn-sm btn-primary">Ок</button>
+                </div>
               </div>
             </div>
           </div>
 
-          <div v-if="typeWorkLaying">
+          <div>
             <div v-if="todayNote == null">
-              <label>Кол-во раствора:</label>
-              <input class="form-control form-control-sm" v-model="todayConsumption" />
+              <label v-if="typeWorkLaying">Кол-во раствора:</label>
+              <label v-else>Кол-во материала:</label>
+              <input
+                class="form-control form-control-sm"
+                v-model="todayConsumption"
+              />
             </div>
             <div v-else class="d-flex">
               <div class="flex-grow-1 d-flex">
-                <label class="marginR15">Кол-во раствора:</label>
+                <label class="marginR15" v-if="typeWorkLaying"
+                  >Кол-во раствора:</label
+                >
+                <label class="marginR15" v-else>Кол-во материала:</label>
                 <div v-if="!isEditTodayConsumption">
                   <label class="marginR15">{{
                     todayNote != null ? todayNote.consumption : ""
@@ -220,17 +253,22 @@
                 />
               </div>
               <div class="lineData col-lg-6">
-                <div class="d-flex">
-                  <div class="flex-grow-1 d-flex">
-                    <label class="marginR15">Кол-во человек:</label>
-                    <label class="marginR15">{{ range.data.people }}</label>
-                  </div>
-                </div>
-
                 <div v-if="typeWorkLaying">
                   <div class="d-flex">
                     <div class="flex-grow-1 d-flex">
-                      <label class="marginR15">Кол-во раствора:</label>
+                      <label class="marginR15">Кол-во человек:</label>
+                      <label class="marginR15">{{ range.data.people }}</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="d-flex">
+                    <div class="flex-grow-1 d-flex">
+                      <label class="marginR15" v-if="typeWorkLaying"
+                        >Кол-во раствора:</label
+                      >
+                      <label class="marginR15" v-else>Кол-во материала:</label>
                       <label class="marginR15">{{
                         range.data.consumption
                       }}</label>
@@ -248,6 +286,16 @@
       </div>
       <div>
         <highcharts :options="chartOptions"></highcharts>
+      </div>
+      <div v-if="notesList.length > 0">
+        <div class="d-flex">
+          <div class="col-md-2">Дата</div>
+          <div class="flex-grow-1">Кол-во раствора/материала</div>
+        </div>
+        <div v-for="note in notesList" :key="note.id" class="d-flex">
+          <div class="col-md-2">{{note.dt}}</div>
+          <div class="flex-grow-1">{{note.consumption}}</div>
+        </div>
       </div>
     </div>
   </div>
@@ -278,7 +326,7 @@ export default {
       chartOptions: {
         chart: { type: "line", height: 200 },
         credits: {
-          enabled: false
+          enabled: false,
         },
         title: { text: "" },
         xAxis: {
@@ -286,19 +334,20 @@ export default {
         },
         yAxis: {
           title: { text: "" },
-          max: this.task.capacity
+          max: this.task.capacity,
         },
         legend: { enabled: false },
-        series: []
+        series: [],
       },
       range: {
         data: {
           people: 0,
           consumption: 0,
-          deviation: 0
-        }
+          deviation: 0,
+        },
       },
-      handymans: []
+      handymans: [],
+      notesList: [],
     };
   },
   computed: {
@@ -312,71 +361,79 @@ export default {
       switch (this.task.typeWork) {
         case 1:
           return "Кладка";
-          break;
         case 2:
-          return "Штукатурка";
-          break;
+          return "Материалы";
       }
     },
     typeWorkLaying() {
       return this.task.typeWork == 1;
     },
     completedWork() {
-      if (this.typeWorkLaying) {
-        var result = this.task.notes.reduce(function (sum, elem) {
-          return sum + elem.consumption;
-        }, 0);
-        return this.calcConsumptionToWork(result).toFixed(2);
-      } else {
+      //if (this.typeWorkLaying) {
+      var result = this.task.notes.reduce(function (sum, elem) {
+        return sum + elem.consumption;
+      }, 0);
+      return this.calcConsumptionToWork(result).toFixed(2);
+      /*} else {
         var result = this.task.notes.reduce(function (sum, elem) {
           return sum + elem.people;
         }, 0);
         return this.calcPeopleToWork(result).toFixed(2);
-      }
+      }*/
     },
     completedWorkDT() {
-      if (this.task.notes.length == 0)
-        return "----";
+      if (this.task.notes.length == 0) return "----";
       let needDays = 1;
-      if (this.typeWorkLaying) {
-        needDays = Math.ceil((this.task.capacity - this.completedWork) / this.calcConsumptionToWork(this.task.notes[this.task.notes.length - 1].consumption));
-      } else {
+      //if (this.typeWorkLaying) {
+      needDays = Math.ceil(
+        (this.task.capacity - this.completedWork) /
+          this.calcConsumptionToWork(
+            this.task.notes[this.task.notes.length - 1].consumption
+          )
+      );
+      /*} else {
         needDays = Math.ceil((this.task.capacity - this.completedWork) / this.calcPeopleToWork(this.task.notes[this.task.notes.length - 1].people));
-      }
+      }*/
       return this.$moment().add(needDays, "days").format("YYYY-MM-DD");
     },
     taskStart() {
-      var start = this.$moment(this.task.created_at).add(-1, "day").format("YYYY-MM-DD");
+      var start = this.$moment(this.task.created_at)
+        .add(-1, "day")
+        .format("YYYY-MM-DD");
       return start;
     },
     isFull() {
-      return (parseFloat(this.completedWork) >= parseFloat(this.task.capacity));
+      return parseFloat(this.completedWork) >= parseFloat(this.task.capacity);
     },
     deviation() {
       for (let i = 0; i < this.task.notes.length; i++) {
         if (this.task.notes[i].dt == this.date) {
-          return (this.calcWorkToConsumption(this.calcPeopleToWork(this.task.notes[i].people))).toFixed(2);
+          return this.calcWorkToConsumption(
+            this.calcPeopleToWork(this.task.notes[i].people)
+          ).toFixed(2);
         }
       }
       return 0;
     },
     rangeDeviation() {
       if (this.range.data.people != 0 && this.range.data.consumption != 0)
-        return (this.calcWorkToConsumption(this.calcPeopleToWork(this.range.data.people))).toFixed(2);
+        return this.calcWorkToConsumption(
+          this.calcPeopleToWork(this.range.data.people)
+        ).toFixed(2);
 
       return 0;
-    }
+    },
   },
   watch: {
     date() {
       this.checkTodayNote();
-    }
+    },
   },
   methods: {
     checkTodayNote() {
       this.todayNote = null;
       this.todayConsumption = 0;
-      this.task.notes.forEach(element => {
+      this.task.notes.forEach((element) => {
         if (this.date == element.dt) {
           this.todayNote = element;
           this.todayConsumption = element.consumption;
@@ -391,7 +448,7 @@ export default {
             people: this.todayPeople,
             consumption: this.todayConsumption,
             dt: this.date,
-            task_id: this.task.id
+            task_id: this.task.id,
           })
           .then(
             function (response) {
@@ -399,7 +456,7 @@ export default {
                 people: parseFloat(this.todayPeople),
                 consumption: parseFloat(this.todayConsumption),
                 dt: this.date,
-                id: response.data
+                id: response.data,
               };
               this.task.notes.push(this.todayNote);
               this.fillGraph();
@@ -423,22 +480,34 @@ export default {
       this.chartOptions.series = [];
       this.chartOptions.series.push({
         type: "column",
-        name: "Раствор",
-        data: []
+        name: "Объем работ",
+        data: [],
       });
       this.chartOptions.series.data = [];
       this.task.notes.sort(this.compareNotesByDate);
       this.task.notes.reduce((sum, note) => {
         let color = "#7CB5EC";
-        if (this.isAdmin && this.calcPeopleToWork(note.people) - this.calcConsumptionToWork(note.consumption) > 1)
-          color = "#FF0000";
-        if (this.isAdmin && this.calcPeopleToWork(note.people) - this.calcConsumptionToWork(note.consumption) < -1)
-          color = "#FFFF00";
+        if (this.typeWorkLaying) {
+          if (
+            this.isAdmin &&
+            this.calcPeopleToWork(note.people) -
+              this.calcConsumptionToWork(note.consumption) >
+              1
+          )
+            color = "#FF0000";
+          if (
+            this.isAdmin &&
+            this.calcPeopleToWork(note.people) -
+              this.calcConsumptionToWork(note.consumption) <
+              -1
+          )
+            color = "#FFFF00";
+        }
         let y = sum + this.calcConsumptionToWork(note.consumption);
         this.chartOptions.series[0].data.push({
           x: this.$moment(note.dt).add(4, "hour").valueOf(),
           y: y,
-          color: color
+          color: color,
         });
         return y;
       }, 0);
@@ -452,7 +521,7 @@ export default {
     calcWorkToConsumption(work) {
       return work * this.task.standartConsumption;
     },
-    editUser(){
+    editUser() {
       if (!this.isEditUser) {
         this.isEditUser = true;
       } else {
@@ -460,7 +529,7 @@ export default {
           .post(this.$store.state.host + "api/changeTaskUser", {
             api_token: this.$store.state.userApi,
             task_id: this.task.id,
-            user_id: this.task.user.id
+            user_id: this.task.user.id,
           })
           .then(function (response) {
             this.isEditUser = false;
@@ -475,7 +544,7 @@ export default {
           .post(this.$store.state.host + "api/changeTaskCapacity", {
             api_token: this.$store.state.userApi,
             task_id: this.task.id,
-            capacity: this.task.capacity
+            capacity: this.task.capacity,
           })
           .then(function (response) {
             this.isEditCapacity = false;
@@ -491,7 +560,7 @@ export default {
           .post(this.$store.state.host + "api/changeTaskEnd", {
             api_token: this.$store.state.userApi,
             task_id: this.task.id,
-            end: this.task.end
+            end: this.task.end,
           })
           .then(
             function (response) {
@@ -512,7 +581,7 @@ export default {
           .post(this.$store.state.host + "api/changeTaskStandartPeople", {
             api_token: this.$store.state.userApi,
             task_id: this.task.id,
-            standartPeople: this.task.standartPeople
+            standartPeople: this.task.standartPeople,
           })
           .then(function (response) {
             this.isEditStandartPeople = false;
@@ -524,12 +593,14 @@ export default {
       if (!this.isEditStandartConsumption) {
         this.isEditStandartConsumption = true;
       } else {
-        this.task.standartConsumption = parseFloat(this.task.standartConsumption.toString().replace(',', '.'));
+        this.task.standartConsumption = parseFloat(
+          this.task.standartConsumption.toString().replace(",", ".")
+        );
         this.$http
           .post(this.$store.state.host + "api/changeTaskStandartConsumption", {
             api_token: this.$store.state.userApi,
             task_id: this.task.id,
-            standartConsumption: this.task.standartConsumption
+            standartConsumption: this.task.standartConsumption,
           })
           .then(function (response) {
             this.isEditStandartConsumption = false;
@@ -545,7 +616,7 @@ export default {
           .post(this.$store.state.host + "api/changeNotePeople", {
             api_token: this.$store.state.userApi,
             id: this.todayNote.id,
-            people: this.todayNote.people
+            people: this.todayNote.people,
           })
           .then(function (response) {
             this.isEditTodayPeople = false;
@@ -561,7 +632,7 @@ export default {
           .post(this.$store.state.host + "api/changeNoteConsumption", {
             api_token: this.$store.state.userApi,
             id: this.todayNote.id,
-            consumption: this.todayConsumption
+            consumption: this.todayConsumption,
           })
           .then(function (response) {
             this.isEditTodayConsumption = false;
@@ -575,7 +646,7 @@ export default {
         this.$http
           .post(this.$store.state.host + "api/deleteTask", {
             api_token: this.$store.state.userApi,
-            id: this.task.id
+            id: this.task.id,
           })
           .then(function (response) {
             this.$emit("refresh");
@@ -586,7 +657,7 @@ export default {
       this.$http
         .post(this.$store.state.host + "api/completeTask", {
           api_token: this.$store.state.userApi,
-          id: this.task.id
+          id: this.task.id,
         })
         .then(function (response) {
           this.$emit("refresh");
@@ -596,31 +667,36 @@ export default {
       this.$http
         .post(this.$store.state.host + "api/restoreTask", {
           api_token: this.$store.state.userApi,
-          id: id
+          id: id,
         })
         .then(() => {
           this.$emit("refresh");
-        })
+        });
     },
     changeRange() {
       this.range.data = {};
-      this.range.data = this.task.notes.reduce((temp, elem) => {
-        if (elem.dt >= this.range.start && elem.dt <= this.range.end) {
-          temp.people += elem.people;
-          temp.consumption += elem.consumption;
-          console.log(temp.poeple, temp.consumption);
-        }
-        return temp;
-      }, { people: 0, consumption: 0 });
+      this.notesList = [];
+      this.range.data = this.task.notes.reduce(
+        (temp, elem) => {
+          if (elem.dt >= this.range.start && elem.dt <= this.range.end) {
+            temp.people += elem.people;
+            temp.consumption += elem.consumption;
+            this.notesList.push({dt: elem.dt, consumption: elem.consumption});
+          }
+          return temp;
+        },
+        { people: 0, consumption: 0 }
+      );
       this.range.data.people = this.range.data.people.toFixed(2);
       this.range.data.consumption = this.range.data.consumption.toFixed(2);
+
     },
     getListHandymans() {
       this.$http
         .get(this.$store.state.host + "api/getListHandymans", {
           params: {
             api_token: this.$store.state.userApi,
-          }
+          },
         })
         .then(function (response) {
           this.handymans = response.data;
@@ -630,12 +706,14 @@ export default {
   created() {
     this.date = this.$moment().format("YYYY-MM-DD");
     this.today = this.$moment().add(1, "day").format("YYYY-MM-DD");
-    this.chartOptions.xAxis.min = this.$moment(this.$moment(this.task.created_at).format("YYYY-MM-DD")).valueOf();
+    this.chartOptions.xAxis.min = this.$moment(
+      this.$moment(this.task.created_at).format("YYYY-MM-DD")
+    ).valueOf();
     this.chartOptions.xAxis.max = this.$moment(this.task.end).valueOf();
     this.checkTodayNote();
     this.fillGraph();
     this.getListHandymans();
-  }
+  },
 };
 </script>
 

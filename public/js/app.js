@@ -2505,6 +2505,54 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2561,7 +2609,8 @@ __webpack_require__.r(__webpack_exports__);
           deviation: 0
         }
       },
-      handymans: []
+      handymans: [],
+      notesList: []
     };
   },
   computed: {
@@ -2575,38 +2624,35 @@ __webpack_require__.r(__webpack_exports__);
       switch (this.task.typeWork) {
         case 1:
           return "Кладка";
-          break;
 
         case 2:
-          return "Штукатурка";
-          break;
+          return "Материалы";
       }
     },
     typeWorkLaying: function typeWorkLaying() {
       return this.task.typeWork == 1;
     },
     completedWork: function completedWork() {
-      if (this.typeWorkLaying) {
-        var result = this.task.notes.reduce(function (sum, elem) {
-          return sum + elem.consumption;
-        }, 0);
-        return this.calcConsumptionToWork(result).toFixed(2);
-      } else {
+      //if (this.typeWorkLaying) {
+      var result = this.task.notes.reduce(function (sum, elem) {
+        return sum + elem.consumption;
+      }, 0);
+      return this.calcConsumptionToWork(result).toFixed(2);
+      /*} else {
         var result = this.task.notes.reduce(function (sum, elem) {
           return sum + elem.people;
         }, 0);
         return this.calcPeopleToWork(result).toFixed(2);
-      }
+      }*/
     },
     completedWorkDT: function completedWorkDT() {
       if (this.task.notes.length == 0) return "----";
-      var needDays = 1;
+      var needDays = 1; //if (this.typeWorkLaying) {
 
-      if (this.typeWorkLaying) {
-        needDays = Math.ceil((this.task.capacity - this.completedWork) / this.calcConsumptionToWork(this.task.notes[this.task.notes.length - 1].consumption));
-      } else {
+      needDays = Math.ceil((this.task.capacity - this.completedWork) / this.calcConsumptionToWork(this.task.notes[this.task.notes.length - 1].consumption));
+      /*} else {
         needDays = Math.ceil((this.task.capacity - this.completedWork) / this.calcPeopleToWork(this.task.notes[this.task.notes.length - 1].people));
-      }
+      }*/
 
       return this.$moment().add(needDays, "days").format("YYYY-MM-DD");
     },
@@ -2686,15 +2732,18 @@ __webpack_require__.r(__webpack_exports__);
       this.chartOptions.series = [];
       this.chartOptions.series.push({
         type: "column",
-        name: "Раствор",
+        name: "Объем работ",
         data: []
       });
       this.chartOptions.series.data = [];
       this.task.notes.sort(this.compareNotesByDate);
       this.task.notes.reduce(function (sum, note) {
         var color = "#7CB5EC";
-        if (_this2.isAdmin && _this2.calcPeopleToWork(note.people) - _this2.calcConsumptionToWork(note.consumption) > 1) color = "#FF0000";
-        if (_this2.isAdmin && _this2.calcPeopleToWork(note.people) - _this2.calcConsumptionToWork(note.consumption) < -1) color = "#FFFF00";
+
+        if (_this2.typeWorkLaying) {
+          if (_this2.isAdmin && _this2.calcPeopleToWork(note.people) - _this2.calcConsumptionToWork(note.consumption) > 1) color = "#FF0000";
+          if (_this2.isAdmin && _this2.calcPeopleToWork(note.people) - _this2.calcConsumptionToWork(note.consumption) < -1) color = "#FFFF00";
+        }
 
         var y = sum + _this2.calcConsumptionToWork(note.consumption);
 
@@ -2777,7 +2826,7 @@ __webpack_require__.r(__webpack_exports__);
       if (!this.isEditStandartConsumption) {
         this.isEditStandartConsumption = true;
       } else {
-        this.task.standartConsumption = parseFloat(this.task.standartConsumption.toString().replace(',', '.'));
+        this.task.standartConsumption = parseFloat(this.task.standartConsumption.toString().replace(",", "."));
         this.$http.post(this.$store.state.host + "api/changeTaskStandartConsumption", {
           api_token: this.$store.state.userApi,
           task_id: this.task.id,
@@ -2849,11 +2898,16 @@ __webpack_require__.r(__webpack_exports__);
       var _this4 = this;
 
       this.range.data = {};
+      this.notesList = [];
       this.range.data = this.task.notes.reduce(function (temp, elem) {
         if (elem.dt >= _this4.range.start && elem.dt <= _this4.range.end) {
           temp.people += elem.people;
           temp.consumption += elem.consumption;
-          console.log(temp.poeple, temp.consumption);
+
+          _this4.notesList.push({
+            dt: elem.dt,
+            consumption: elem.consumption
+          });
         }
 
         return temp;
@@ -59149,7 +59203,7 @@ var render = function() {
                   _vm._v("Кладка")
                 ]),
                 _vm._v(" "),
-                _c("option", { attrs: { value: "2" } }, [_vm._v("Штукатурка")])
+                _c("option", { attrs: { value: "2" } }, [_vm._v("Материалы")])
               ]
             )
           ])
@@ -59184,34 +59238,40 @@ var render = function() {
           ])
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "row lineData" }, [
-          _c("div", { staticClass: "col-md-6" }, [
-            _vm._v("Норматив объем работ/чел/сут")
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-6" }, [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.newTask.standartPeople,
-                  expression: "newTask.standartPeople"
-                }
-              ],
-              staticClass: "form-control",
-              domProps: { value: _vm.newTask.standartPeople },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
+        _vm.newTask.type != 2
+          ? _c("div", { staticClass: "row lineData" }, [
+              _c("div", { staticClass: "col-md-6" }, [
+                _vm._v("Норматив объем работ/чел/сут")
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-md-6" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.newTask.standartPeople,
+                      expression: "newTask.standartPeople"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  domProps: { value: _vm.newTask.standartPeople },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(
+                        _vm.newTask,
+                        "standartPeople",
+                        $event.target.value
+                      )
+                    }
                   }
-                  _vm.$set(_vm.newTask, "standartPeople", $event.target.value)
-                }
-              }
-            })
-          ])
-        ]),
+                })
+              ])
+            ])
+          : _vm._e(),
         _vm._v(" "),
         _c("div", { staticClass: "row lineData" }, [
           _c("div", { staticClass: "col-md-6" }, [
@@ -59743,7 +59803,13 @@ var render = function() {
                       return _c(
                         "option",
                         { key: handyman.id, domProps: { value: handyman } },
-                        [_vm._v(_vm._s(handyman.name))]
+                        [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s(handyman.name) +
+                              "\n          "
+                          )
+                        ]
                       )
                     }),
                     0
@@ -59830,7 +59896,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("Ок")]
+                    [_vm._v("\n          Ок\n        ")]
                   )
                 ])
               : _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
@@ -59935,7 +60001,7 @@ var render = function() {
             ])
           ]),
           _vm._v(" "),
-          _vm.isAdmin || _vm.isLeader
+          (_vm.isAdmin || _vm.isLeader) && _vm.typeWorkLaying
             ? _c("div", { staticClass: "row lineData" }, [
                 _c("div", { staticClass: "col-md-3" }, [
                   _vm._v("Норматив объем работ/чел/сут")
@@ -60006,11 +60072,15 @@ var render = function() {
               ])
             : _vm._e(),
           _vm._v(" "),
-          (_vm.isAdmin || _vm.isLeader) && _vm.typeWorkLaying
+          _vm.isAdmin || _vm.isLeader
             ? _c("div", { staticClass: "row lineData" }, [
-                _c("div", { staticClass: "col-md-3" }, [
-                  _vm._v("Норматив раствор/объем работ")
-                ]),
+                _vm.typeWorkLaying
+                  ? _c("div", { staticClass: "col-md-3" }, [
+                      _vm._v("\n        Норматив раствор/объем работ\n      ")
+                    ])
+                  : _c("div", { staticClass: "col-md-3" }, [
+                      _vm._v("Норматив материала/объем работ")
+                    ]),
                 _vm._v(" "),
                 _vm.isEditStandartConsumption
                   ? _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
@@ -60105,126 +60175,29 @@ var render = function() {
             _c("div", { staticClass: "lineData col-lg-3" }, [
               _c("br"),
               _vm._v(" "),
-              _vm.todayNote == null
-                ? _c("div", [
-                    _c("label", [_vm._v("Кол-во человек:")]),
-                    _vm._v(" "),
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.todayPeople,
-                          expression: "todayPeople"
-                        }
-                      ],
-                      staticClass: "form-control form-control-sm",
-                      domProps: { value: _vm.todayPeople },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.todayPeople = $event.target.value
-                        }
-                      }
-                    })
-                  ])
-                : _c("div", { staticClass: "d-flex" }, [
-                    _c("div", { staticClass: "flex-grow-1 d-flex" }, [
-                      _c("label", { staticClass: "marginR15" }, [
-                        _vm._v("Кол-во человек:")
-                      ]),
-                      _vm._v(" "),
-                      !_vm.isEditTodayPeople
-                        ? _c("div", [
-                            _c("label", { staticClass: "marginR15" }, [
-                              _vm._v(
-                                _vm._s(
-                                  _vm.todayNote != null
-                                    ? _vm.todayNote.people
-                                    : ""
-                                )
-                              )
-                            ])
-                          ])
-                        : _c("div", [
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.todayNote.people,
-                                  expression: "todayNote.people"
-                                }
-                              ],
-                              staticClass:
-                                "width50 form-control form-control-sm",
-                              domProps: { value: _vm.todayNote.people },
-                              on: {
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.$set(
-                                    _vm.todayNote,
-                                    "people",
-                                    $event.target.value
-                                  )
-                                }
-                              }
-                            })
-                          ])
-                    ]),
-                    _vm._v(" "),
-                    _vm.isAdmin
-                      ? _c(
-                          "div",
-                          {
-                            on: {
-                              click: function($event) {
-                                return _vm.editTodayPeople()
-                              }
-                            }
-                          },
-                          [
-                            !_vm.isEditTodayPeople
-                              ? _c("div", [_c("BtnEdit")], 1)
-                              : _c("div", [
-                                  _c(
-                                    "button",
-                                    { staticClass: "btn btn-sm btn-primary" },
-                                    [_vm._v("Ок")]
-                                  )
-                                ])
-                          ]
-                        )
-                      : _vm._e()
-                  ]),
-              _vm._v(" "),
               _vm.typeWorkLaying
                 ? _c("div", [
                     _vm.todayNote == null
                       ? _c("div", [
-                          _c("label", [_vm._v("Кол-во раствора:")]),
+                          _c("label", [_vm._v("Кол-во человек:")]),
                           _vm._v(" "),
                           _c("input", {
                             directives: [
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.todayConsumption,
-                                expression: "todayConsumption"
+                                value: _vm.todayPeople,
+                                expression: "todayPeople"
                               }
                             ],
                             staticClass: "form-control form-control-sm",
-                            domProps: { value: _vm.todayConsumption },
+                            domProps: { value: _vm.todayPeople },
                             on: {
                               input: function($event) {
                                 if ($event.target.composing) {
                                   return
                                 }
-                                _vm.todayConsumption = $event.target.value
+                                _vm.todayPeople = $event.target.value
                               }
                             }
                           })
@@ -60232,16 +60205,16 @@ var render = function() {
                       : _c("div", { staticClass: "d-flex" }, [
                           _c("div", { staticClass: "flex-grow-1 d-flex" }, [
                             _c("label", { staticClass: "marginR15" }, [
-                              _vm._v("Кол-во раствора:")
+                              _vm._v("Кол-во человек:")
                             ]),
                             _vm._v(" "),
-                            !_vm.isEditTodayConsumption
+                            !_vm.isEditTodayPeople
                               ? _c("div", [
                                   _c("label", { staticClass: "marginR15" }, [
                                     _vm._v(
                                       _vm._s(
                                         _vm.todayNote != null
-                                          ? _vm.todayNote.consumption
+                                          ? _vm.todayNote.people
                                           : ""
                                       )
                                     )
@@ -60253,20 +60226,23 @@ var render = function() {
                                       {
                                         name: "model",
                                         rawName: "v-model",
-                                        value: _vm.todayConsumption,
-                                        expression: "todayConsumption"
+                                        value: _vm.todayNote.people,
+                                        expression: "todayNote.people"
                                       }
                                     ],
                                     staticClass:
                                       "width50 form-control form-control-sm",
-                                    domProps: { value: _vm.todayConsumption },
+                                    domProps: { value: _vm.todayNote.people },
                                     on: {
                                       input: function($event) {
                                         if ($event.target.composing) {
                                           return
                                         }
-                                        _vm.todayConsumption =
+                                        _vm.$set(
+                                          _vm.todayNote,
+                                          "people",
                                           $event.target.value
+                                        )
                                       }
                                     }
                                   })
@@ -60279,17 +60255,20 @@ var render = function() {
                                 {
                                   on: {
                                     click: function($event) {
-                                      return _vm.editTodayConsumption()
+                                      return _vm.editTodayPeople()
                                     }
                                   }
                                 },
                                 [
-                                  !_vm.isEditTodayConsumption
+                                  !_vm.isEditTodayPeople
                                     ? _c("div", [_c("BtnEdit")], 1)
                                     : _c("div", [
                                         _c(
                                           "button",
-                                          { staticClass: "btn btn-primary" },
+                                          {
+                                            staticClass:
+                                              "btn btn-sm btn-primary"
+                                          },
                                           [_vm._v("Ок")]
                                         )
                                       ])
@@ -60299,6 +60278,107 @@ var render = function() {
                         ])
                   ])
                 : _vm._e(),
+              _vm._v(" "),
+              _c("div", [
+                _vm.todayNote == null
+                  ? _c("div", [
+                      _vm.typeWorkLaying
+                        ? _c("label", [_vm._v("Кол-во раствора:")])
+                        : _c("label", [_vm._v("Кол-во материала:")]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.todayConsumption,
+                            expression: "todayConsumption"
+                          }
+                        ],
+                        staticClass: "form-control form-control-sm",
+                        domProps: { value: _vm.todayConsumption },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.todayConsumption = $event.target.value
+                          }
+                        }
+                      })
+                    ])
+                  : _c("div", { staticClass: "d-flex" }, [
+                      _c("div", { staticClass: "flex-grow-1 d-flex" }, [
+                        _vm.typeWorkLaying
+                          ? _c("label", { staticClass: "marginR15" }, [
+                              _vm._v("Кол-во раствора:")
+                            ])
+                          : _c("label", { staticClass: "marginR15" }, [
+                              _vm._v("Кол-во материала:")
+                            ]),
+                        _vm._v(" "),
+                        !_vm.isEditTodayConsumption
+                          ? _c("div", [
+                              _c("label", { staticClass: "marginR15" }, [
+                                _vm._v(
+                                  _vm._s(
+                                    _vm.todayNote != null
+                                      ? _vm.todayNote.consumption
+                                      : ""
+                                  )
+                                )
+                              ])
+                            ])
+                          : _c("div", [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.todayConsumption,
+                                    expression: "todayConsumption"
+                                  }
+                                ],
+                                staticClass:
+                                  "width50 form-control form-control-sm",
+                                domProps: { value: _vm.todayConsumption },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.todayConsumption = $event.target.value
+                                  }
+                                }
+                              })
+                            ])
+                      ]),
+                      _vm._v(" "),
+                      _vm.isAdmin
+                        ? _c(
+                            "div",
+                            {
+                              on: {
+                                click: function($event) {
+                                  return _vm.editTodayConsumption()
+                                }
+                              }
+                            },
+                            [
+                              !_vm.isEditTodayConsumption
+                                ? _c("div", [_c("BtnEdit")], 1)
+                                : _c("div", [
+                                    _c(
+                                      "button",
+                                      { staticClass: "btn btn-primary" },
+                                      [_vm._v("Ок")]
+                                    )
+                                  ])
+                            ]
+                          )
+                        : _vm._e()
+                    ])
+              ]),
               _vm._v(" "),
               _vm.todayNote == null
                 ? _c(
@@ -60370,18 +60450,6 @@ var render = function() {
                       ),
                       _vm._v(" "),
                       _c("div", { staticClass: "lineData col-lg-6" }, [
-                        _c("div", { staticClass: "d-flex" }, [
-                          _c("div", { staticClass: "flex-grow-1 d-flex" }, [
-                            _c("label", { staticClass: "marginR15" }, [
-                              _vm._v("Кол-во человек:")
-                            ]),
-                            _vm._v(" "),
-                            _c("label", { staticClass: "marginR15" }, [
-                              _vm._v(_vm._s(_vm.range.data.people))
-                            ])
-                          ])
-                        ]),
-                        _vm._v(" "),
                         _vm.typeWorkLaying
                           ? _c("div", [
                               _c("div", { staticClass: "d-flex" }, [
@@ -60390,17 +60458,35 @@ var render = function() {
                                   { staticClass: "flex-grow-1 d-flex" },
                                   [
                                     _c("label", { staticClass: "marginR15" }, [
-                                      _vm._v("Кол-во раствора:")
+                                      _vm._v("Кол-во человек:")
                                     ]),
                                     _vm._v(" "),
                                     _c("label", { staticClass: "marginR15" }, [
-                                      _vm._v(_vm._s(_vm.range.data.consumption))
+                                      _vm._v(_vm._s(_vm.range.data.people))
                                     ])
                                   ]
                                 )
                               ])
                             ])
                           : _vm._e(),
+                        _vm._v(" "),
+                        _c("div", [
+                          _c("div", { staticClass: "d-flex" }, [
+                            _c("div", { staticClass: "flex-grow-1 d-flex" }, [
+                              _vm.typeWorkLaying
+                                ? _c("label", { staticClass: "marginR15" }, [
+                                    _vm._v("Кол-во раствора:")
+                                  ])
+                                : _c("label", { staticClass: "marginR15" }, [
+                                    _vm._v("Кол-во материала:")
+                                  ]),
+                              _vm._v(" "),
+                              _c("label", { staticClass: "marginR15" }, [
+                                _vm._v(_vm._s(_vm.range.data.consumption))
+                              ])
+                            ])
+                          ])
+                        ]),
                         _vm._v(" "),
                         _vm.typeWorkLaying
                           ? _c("div", [
@@ -60423,11 +60509,46 @@ var render = function() {
             "div",
             [_c("highcharts", { attrs: { options: _vm.chartOptions } })],
             1
-          )
+          ),
+          _vm._v(" "),
+          _vm.notesList.length > 0
+            ? _c(
+                "div",
+                [
+                  _vm._m(0),
+                  _vm._v(" "),
+                  _vm._l(_vm.notesList, function(note) {
+                    return _c("div", { key: note.id, staticClass: "d-flex" }, [
+                      _c("div", { staticClass: "col-md-2" }, [
+                        _vm._v(_vm._s(note.dt))
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "flex-grow-1" }, [
+                        _vm._v(_vm._s(note.consumption))
+                      ])
+                    ])
+                  })
+                ],
+                2
+              )
+            : _vm._e()
         ])
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "d-flex" }, [
+      _c("div", { staticClass: "col-md-2" }, [_vm._v("Дата")]),
+      _vm._v(" "),
+      _c("div", { staticClass: "flex-grow-1" }, [
+        _vm._v("Кол-во раствора/материала")
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 

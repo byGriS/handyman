@@ -24,7 +24,7 @@
           <div class="col-md-6">
             <select class="form-control" v-model="newTask.type">
               <option selected value="1">Кладка</option>
-              <option value="2">Штукатурка</option>
+              <option value="2">Материалы</option>
             </select>
           </div>
         </div>
@@ -36,7 +36,7 @@
           </div>
         </div>
 
-        <div class="row lineData">
+        <div class="row lineData" v-if="newTask.type != 2">
           <div class="col-md-6">Норматив объем работ/чел/сут</div>
           <div class="col-md-6">
             <input class="form-control" v-model="newTask.standartPeople" />
