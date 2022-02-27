@@ -77,7 +77,16 @@
         <div class="col-md-3">{{ completedWork }}</div>
       </div>
 
-      <div class="row lineData">
+      <div class="row lineData" v-if="!typeWorkLaying">
+        <div class="col-md-3">Необходимый объем материалов</div>
+        <div class="col-md-3 d-flex dataHover">
+          {{ totalMaterial }}
+        </div>
+        <div class="col-md-3">Взято всего материала</div>
+        <div class="col-md-3">{{ completedMaterial }}</div>
+      </div>
+
+      <div class="row lineData" v-if="typeWorkLaying">
         <div class="col-md-3">Планируемая дата окончания работ</div>
         <div v-if="isEditEnd" class="col-md-3 d-flex dataHover">
           <input
@@ -293,8 +302,8 @@
           <div class="flex-grow-1">Кол-во раствора/материала</div>
         </div>
         <div v-for="note in notesList" :key="note.id" class="d-flex">
-          <div class="col-md-2">{{note.dt}}</div>
-          <div class="flex-grow-1">{{note.consumption}}</div>
+          <div class="col-md-2">{{ note.dt }}</div>
+          <div class="flex-grow-1">{{ note.consumption }}</div>
         </div>
       </div>
     </div>
@@ -381,6 +390,12 @@ export default {
         return this.calcPeopleToWork(result).toFixed(2);
       }*/
     },
+    completedMaterial() {
+      var result = this.task.notes.reduce(function (sum, elem) {
+        return sum + elem.consumption;
+      }, 0);
+      return result.toFixed(2);
+    },
     completedWorkDT() {
       if (this.task.notes.length == 0) return "----";
       let needDays = 1;
@@ -422,6 +437,9 @@ export default {
         ).toFixed(2);
 
       return 0;
+    },
+    totalMaterial() {
+      return this.task.capacity * this.task.standartConsumption;
     },
   },
   watch: {
@@ -476,7 +494,11 @@ export default {
     },
     fillGraph() {
       this.chartOptions.yAxis.max = this.task.capacity;
-      this.chartOptions.xAxis.max = this.$moment(this.task.end).valueOf();
+      if (this.task.notes.length > 0) {
+        this.chartOptions.xAxis.max = this.$moment(this.task.notes[this.task.notes.length - 1].dt).valueOf();
+      } else {
+        this.chartOptions.xAxis.max = this.$moment(this.task.end).valueOf();
+      }
       this.chartOptions.series = [];
       this.chartOptions.series.push({
         type: "column",
@@ -681,7 +703,7 @@ export default {
           if (elem.dt >= this.range.start && elem.dt <= this.range.end) {
             temp.people += elem.people;
             temp.consumption += elem.consumption;
-            this.notesList.push({dt: elem.dt, consumption: elem.consumption});
+            this.notesList.push({ dt: elem.dt, consumption: elem.consumption });
           }
           return temp;
         },
@@ -689,7 +711,6 @@ export default {
       );
       this.range.data.people = this.range.data.people.toFixed(2);
       this.range.data.consumption = this.range.data.consumption.toFixed(2);
-
     },
     getListHandymans() {
       this.$http

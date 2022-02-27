@@ -2178,6 +2178,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -2199,7 +2207,11 @@ __webpack_require__.r(__webpack_exports__);
       hide: false
     };
   },
-  computed: {},
+  computed: {
+    totalMaterial: function totalMaterial() {
+      return this.newTask.capacity * this.newTask.standartConsumption;
+    }
+  },
   watch: {},
   methods: {
     getListHandymans: function getListHandymans() {
@@ -2250,6 +2262,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuelendar_components_vl_day_selector__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuelendar/components/vl-day-selector */ "./node_modules/vuelendar/components/vl-day-selector.vue");
 /* harmony import */ var vuelendar_components_vl_range_selector__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuelendar/components/vl-range-selector */ "./node_modules/vuelendar/components/vl-range-selector.vue");
 /* harmony import */ var _BtnEdit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./BtnEdit */ "./resources/js/components/BtnEdit.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2645,6 +2666,12 @@ __webpack_require__.r(__webpack_exports__);
         return this.calcPeopleToWork(result).toFixed(2);
       }*/
     },
+    completedMaterial: function completedMaterial() {
+      var result = this.task.notes.reduce(function (sum, elem) {
+        return sum + elem.consumption;
+      }, 0);
+      return result.toFixed(2);
+    },
     completedWorkDT: function completedWorkDT() {
       if (this.task.notes.length == 0) return "----";
       var needDays = 1; //if (this.typeWorkLaying) {
@@ -2675,6 +2702,9 @@ __webpack_require__.r(__webpack_exports__);
     rangeDeviation: function rangeDeviation() {
       if (this.range.data.people != 0 && this.range.data.consumption != 0) return this.calcWorkToConsumption(this.calcPeopleToWork(this.range.data.people)).toFixed(2);
       return 0;
+    },
+    totalMaterial: function totalMaterial() {
+      return this.task.capacity * this.task.standartConsumption;
     }
   },
   watch: {
@@ -2728,7 +2758,13 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       this.chartOptions.yAxis.max = this.task.capacity;
-      this.chartOptions.xAxis.max = this.$moment(this.task.end).valueOf();
+
+      if (this.task.notes.length > 0) {
+        this.chartOptions.xAxis.max = this.$moment(this.task.notes[this.task.notes.length - 1].dt).valueOf();
+      } else {
+        this.chartOptions.xAxis.max = this.$moment(this.task.end).valueOf();
+      }
+
       this.chartOptions.series = [];
       this.chartOptions.series.push({
         type: "column",
@@ -59117,7 +59153,7 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-lg-5" }, [
+      _c("div", { staticClass: "col-lg-6" }, [
         _c("div", { staticClass: "row lineData" }, [
           _c("div", { staticClass: "col-md-6" }, [_vm._v("Исполнитель")]),
           _vm._v(" "),
@@ -59274,9 +59310,13 @@ var render = function() {
           : _vm._e(),
         _vm._v(" "),
         _c("div", { staticClass: "row lineData" }, [
-          _c("div", { staticClass: "col-md-6" }, [
-            _vm._v("Норматив раствор/объем работ")
-          ]),
+          _vm.newTask.type != 2
+            ? _c("div", { staticClass: "col-md-6" }, [
+                _vm._v("Норматив раствор/объем работ")
+              ])
+            : _c("div", { staticClass: "col-md-6" }, [
+                _vm._v("Норматив материал/объем работ")
+              ]),
           _vm._v(" "),
           _c("div", { staticClass: "col-md-6" }, [
             _c("input", {
@@ -59304,33 +59344,49 @@ var render = function() {
               }
             })
           ])
-        ])
+        ]),
+        _vm._v(" "),
+        _vm.newTask.type == 2
+          ? _c("div", { staticClass: "row lineData" }, [
+              _c("div", { staticClass: "col-md-6" }, [
+                _vm._v("Необходимо всего материала")
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-md-6" }, [
+                _vm._v(
+                  "\n          " + _vm._s(_vm.totalMaterial) + "\n        "
+                )
+              ])
+            ])
+          : _vm._e()
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "col-lg-4" }, [
-        _c(
-          "div",
-          { staticClass: "calendarWrap" },
-          [
-            _c("div", [_vm._v("Срок выполнения работы")]),
-            _vm._v(" "),
-            _c("Calendar", {
-              attrs: { disabledDates: { to: _vm.today } },
-              model: {
-                value: _vm.newTask.end,
-                callback: function($$v) {
-                  _vm.$set(_vm.newTask, "end", $$v)
-                },
-                expression: "newTask.end"
-              }
-            })
-          ],
-          1
-        )
+        _vm.newTask.type != 2
+          ? _c(
+              "div",
+              { staticClass: "calendarWrap" },
+              [
+                _c("div", [_vm._v("Срок выполнения работы")]),
+                _vm._v(" "),
+                _c("Calendar", {
+                  attrs: { disabledDates: { to: _vm.today } },
+                  model: {
+                    value: _vm.newTask.end,
+                    callback: function($$v) {
+                      _vm.$set(_vm.newTask, "end", $$v)
+                    },
+                    expression: "newTask.end"
+                  }
+                })
+              ],
+              1
+            )
+          : _vm._e()
       ]),
       _vm._v(" "),
       _vm.hide
-        ? _c("div", { staticClass: "col-lg-3" }, [
+        ? _c("div", { staticClass: "col-lg-2" }, [
             _c("div", [_vm._v("Выходные дни")]),
             _vm._v(" "),
             _c("div", { staticClass: "form-check" }, [
@@ -59929,77 +59985,99 @@ var render = function() {
             ])
           ]),
           _vm._v(" "),
-          _c("div", { staticClass: "row lineData" }, [
-            _c("div", { staticClass: "col-md-3" }, [
-              _vm._v("Планируемая дата окончания работ")
-            ]),
-            _vm._v(" "),
-            _vm.isEditEnd
-              ? _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.task.end,
-                        expression: "task.end"
-                      }
-                    ],
-                    staticClass: "form-control form-control-sm",
-                    attrs: { type: "date" },
-                    domProps: { value: _vm.task.end },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.task, "end", $event.target.value)
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-sm btn-primary",
-                      on: {
-                        click: function($event) {
-                          return _vm.editEnd()
-                        }
-                      }
-                    },
-                    [_vm._v("Ок")]
-                  )
+          !_vm.typeWorkLaying
+            ? _c("div", { staticClass: "row lineData" }, [
+                _c("div", { staticClass: "col-md-3" }, [
+                  _vm._v("Необходимый объем материалов")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
+                  _vm._v("\n        " + _vm._s(_vm.totalMaterial) + "\n      ")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-md-3" }, [
+                  _vm._v("Взято всего материала")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-md-3" }, [
+                  _vm._v(_vm._s(_vm.completedMaterial))
                 ])
-              : _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
-                  _c("div", { staticClass: "flex-grow-1" }, [
-                    _vm._v(_vm._s(_vm.task.end))
-                  ]),
-                  _vm._v(" "),
-                  _vm.isAdmin
-                    ? _c(
-                        "div",
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.typeWorkLaying
+            ? _c("div", { staticClass: "row lineData" }, [
+                _c("div", { staticClass: "col-md-3" }, [
+                  _vm._v("Планируемая дата окончания работ")
+                ]),
+                _vm._v(" "),
+                _vm.isEditEnd
+                  ? _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.task.end,
+                            expression: "task.end"
+                          }
+                        ],
+                        staticClass: "form-control form-control-sm",
+                        attrs: { type: "date" },
+                        domProps: { value: _vm.task.end },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(_vm.task, "end", $event.target.value)
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "button",
                         {
+                          staticClass: "btn btn-sm btn-primary",
                           on: {
                             click: function($event) {
                               return _vm.editEnd()
                             }
                           }
                         },
-                        [_c("BtnEdit")],
-                        1
+                        [_vm._v("Ок")]
                       )
-                    : _vm._e()
+                    ])
+                  : _c("div", { staticClass: "col-md-3 d-flex dataHover" }, [
+                      _c("div", { staticClass: "flex-grow-1" }, [
+                        _vm._v(_vm._s(_vm.task.end))
+                      ]),
+                      _vm._v(" "),
+                      _vm.isAdmin
+                        ? _c(
+                            "div",
+                            {
+                              on: {
+                                click: function($event) {
+                                  return _vm.editEnd()
+                                }
+                              }
+                            },
+                            [_c("BtnEdit")],
+                            1
+                          )
+                        : _vm._e()
+                    ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-md-3" }, [
+                  _vm._v("Расчетная дата окончания работ")
                 ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "col-md-3" }, [
-              _vm._v("Расчетная дата окончания работ")
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "col-md-3" }, [
-              _vm._v(_vm._s(_vm.completedWorkDT))
-            ])
-          ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-md-3" }, [
+                  _vm._v(_vm._s(_vm.completedWorkDT))
+                ])
+              ])
+            : _vm._e(),
           _vm._v(" "),
           (_vm.isAdmin || _vm.isLeader) && _vm.typeWorkLaying
             ? _c("div", { staticClass: "row lineData" }, [

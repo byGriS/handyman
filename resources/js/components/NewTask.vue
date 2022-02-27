@@ -5,7 +5,7 @@
       <button class="btn btn-danger" @click="cancel()">Отмена</button>
     </div>
     <div class="row">
-      <div class="col-lg-5">
+      <div class="col-lg-6">
         <div class="row lineData">
           <div class="col-md-6">Исполнитель</div>
           <div class="col-md-6">
@@ -44,19 +44,27 @@
         </div>
 
         <div class="row lineData">
-          <div class="col-md-6">Норматив раствор/объем работ</div>
+          <div class="col-md-6" v-if="newTask.type != 2">Норматив раствор/объем работ</div>
+          <div class="col-md-6" v-else>Норматив материал/объем работ</div>
           <div class="col-md-6">
             <input class="form-control" v-model="newTask.standartConsumption" />
           </div>
         </div>
+
+         <div class="row lineData" v-if="newTask.type == 2">
+          <div class="col-md-6" >Необходимо всего материала</div>
+          <div class="col-md-6">
+            {{totalMaterial}}
+          </div>
+        </div>
       </div>
       <div class="col-lg-4">
-        <div class="calendarWrap">
+        <div class="calendarWrap" v-if="newTask.type != 2">
           <div>Срок выполнения работы</div>
           <Calendar v-model="newTask.end" :disabledDates="{to: today}" />
         </div>
       </div>
-      <div class="col-lg-3" v-if="hide">
+      <div class="col-lg-2" v-if="hide">
         <div>Выходные дни</div>
         <div class="form-check">
           <input type="checkbox" id="exampleCheck1" v-model="newTask.holiday" value="1" />
@@ -114,7 +122,9 @@ export default {
     };
   },
   computed: {
-
+    totalMaterial(){
+      return this.newTask.capacity * this.newTask.standartConsumption;
+    }
   },
   watch: {
 
