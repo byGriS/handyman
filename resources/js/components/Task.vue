@@ -73,8 +73,10 @@
             <BtnEdit />
           </div>
         </div>
-        <div class="col-md-3">Выполненный объем работ</div>
-        <div class="col-md-3">{{ completedWork }}</div>
+        <div class="col-md-3" v-if="typeWorkLaying">Выполненный объем работ</div>
+        <div class="col-md-3" v-else></div>
+        <div class="col-md-3" v-if="typeWorkLaying">{{ completedWork }}</div>
+        <div class="col-md-3" v-else></div>
       </div>
 
       <div class="row lineData" v-if="!typeWorkLaying">

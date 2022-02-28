@@ -2574,6 +2574,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 
@@ -59976,13 +59978,17 @@ var render = function() {
                     : _vm._e()
                 ]),
             _vm._v(" "),
-            _c("div", { staticClass: "col-md-3" }, [
-              _vm._v("Выполненный объем работ")
-            ]),
+            _vm.typeWorkLaying
+              ? _c("div", { staticClass: "col-md-3" }, [
+                  _vm._v("Выполненный объем работ")
+                ])
+              : _c("div", { staticClass: "col-md-3" }),
             _vm._v(" "),
-            _c("div", { staticClass: "col-md-3" }, [
-              _vm._v(_vm._s(_vm.completedWork))
-            ])
+            _vm.typeWorkLaying
+              ? _c("div", { staticClass: "col-md-3" }, [
+                  _vm._v(_vm._s(_vm.completedWork))
+                ])
+              : _c("div", { staticClass: "col-md-3" })
           ]),
           _vm._v(" "),
           !_vm.typeWorkLaying
