@@ -85,7 +85,12 @@
           {{ totalMaterial }}
         </div>
         <div class="col-md-3">Взято всего материала</div>
-        <div class="col-md-3">{{ completedMaterial }}</div>
+        <div class="col-md-3">
+          <span class="font-weight-bold text-danger" v-if="completedMaterial>totalMaterial">
+          {{ completedMaterial }} ({{completedMaterial - totalMaterial}})
+          </span>
+          <span v-else>{{ completedMaterial }}</span>
+          </div>
       </div>
 
       <div class="row lineData" v-if="typeWorkLaying">

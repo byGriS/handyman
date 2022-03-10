@@ -2576,6 +2576,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -60006,7 +60011,23 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "col-md-3" }, [
-                  _vm._v(_vm._s(_vm.completedMaterial))
+                  _vm.completedMaterial > _vm.totalMaterial
+                    ? _c(
+                        "span",
+                        { staticClass: "font-weight-bold text-danger" },
+                        [
+                          _vm._v(
+                            "\n        " +
+                              _vm._s(_vm.completedMaterial) +
+                              " (" +
+                              _vm._s(
+                                _vm.completedMaterial - _vm.totalMaterial
+                              ) +
+                              ")\n        "
+                          )
+                        ]
+                      )
+                    : _c("span", [_vm._v(_vm._s(_vm.completedMaterial))])
                 ])
               ])
             : _vm._e(),
