@@ -46,4 +46,6 @@ Route::namespace('Api')->group(function () {
   Route::post('addNote', 'ApiNoteController@add');
   Route::post('changeNotePeople', 'ApiNoteController@changeNotePeople');
   Route::post('changeNoteConsumption', 'ApiNoteController@changeNoteConsumption');
+
+  Route::get('getHeaters', 'ApiHeaterController@getListHeaters');
 });

@@ -15,14 +15,14 @@ class IndexController extends Controller {
       return view('auth.login');
   }
 
-  public function test() {
+  /*public function test() {
     $valid = User::where('phone', '9876543210')->first();
     $valid->password = Hash::make('123123');
     $valid->save();
     dd(count($valid));
     $tasks = Work::find(1)->tasks;
     dd($tasks[0]->user);
-  }
+  }*/
 
   public function telegram_message_webhook() {
     $telegram = new \Telegram\Bot\Api(config('telegram.bots.mybot.token'));

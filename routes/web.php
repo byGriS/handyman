@@ -21,10 +21,12 @@ Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('/login', 'Auth\LoginController@login')->name('login');
 Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 
-Route::get('/test', 'IndexController@test');
-
 Route::post('/1896948525:AAHcOXKulESgNKRNZq1_CJvQ3HAsYremVEU/webhook',  'IndexController@telegram_message_webhook');
 Route::get('/telegram_notification', 'IndexController@telegram_notification');
 
+Route::get('/checkowenlcoud', 'OwenCloudController@getData');
+
 Route::get('/{any}', 'IndexController@index')->where('any', '.*');
+
+
 

@@ -13,7 +13,7 @@ class UserCommand extends Command {
 
   public function handle($arguments = null) {
     $update = $this->getUpdate();
-    logs()->debug($update);
+    //logs()->debug($update);
     if (empty($update['message']))
       return;
     if (count($update->message->entities) == 1){

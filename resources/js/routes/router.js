@@ -6,6 +6,7 @@ Vue.use(VueRouter);
 import Users from '../components/Users'
 import Works from '../components/Works'
 import CompletedWorks from '../components/completedWorks'
+import Heating from '../components/Heating'
 
 export default new VueRouter({
   mode: 'history',
@@ -24,6 +25,11 @@ export default new VueRouter({
       path: '/users',
       name: 'users',
       component: Users,
+    },
+    {
+      path: '/heating',
+      name: 'heating',
+      component: Heating,
     },
     {
       path: '*',
