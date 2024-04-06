@@ -39,9 +39,12 @@ class OwenCloudController extends Controller {
       $newValue->save();
     }
 
-    $sendNotice = false;
+    $sendNotice = 0;
     if ($newValue->onoff != $lastValue->onoff) {
-      $sendNotice = true;
+      if ($newValue->onoff == 1)
+        $sendNotice = 1;
+      else
+        $sendNotice = 2;
     }
     if (
       $newValue->onoff && $heater->state != "error" &&
@@ -54,18 +57,45 @@ class OwenCloudController extends Controller {
         $newValue->phaseC < 10
       )
     ) {
-      $sendNotice = true;
+      $sendNotice = 3;
       $heater->state = "error";
       $heater->save();
     } else {
-      $heater->state = "ok";
-      $heater->save();
+      if ($heater->state == "error") {
+        $heater->state = "ok";
+        $heater->save();
+      }
     }
 
-    if ($sendNotice) {
+    $diffMinutes = round(abs(strtotime("now") - strtotime($newValue->last)) / 60, 2);
+    if ($diffMinutes > 10 && $heater->state != "timeout") {
+      $sendNotice = 4;
+      $heater->state = "timeout";
+      $heater->save();
+    }else{
+      if ($heater->state == "timeout") {
+        $heater->state = "ok";
+        $heater->save();
+      }
+    }
+
+    if ($sendNotice > 0) {
+      switch ($sendNotice) {
+        case 1:
+          $text = $heater->title . " включен. Состояние: " . ($newValue->onoff ? "вкл." : "выкл.") . " фаза A " . $newValue->phaseA . "В, фаза B: " . $newValue->phaseB . "В, фаза C: " . $newValue->phaseC . "В, на " . (new \DateTime($newValue->last))->add(new \DateInterval("PT4H"))->format('Y-m-d H:i:s');
+          break;
+        case 2:
+          $text = $heater->title . " выключен. Состояние: " . ($newValue->onoff ? "вкл." : "выкл.") . " фаза A: " . $newValue->phaseA . "В, фаза B: " . $newValue->phaseB . "В, фаза C: " . $newValue->phaseC . "В, на " . (new \DateTime($newValue->last))->add(new \DateInterval("PT4H"))->format('Y-m-d H:i:s');
+          break;
+        case 3:
+          $text = $heater->title . " ошибка по напряжению. Состояние: " . ($newValue->onoff ? "вкл." : "выкл.") . " фаза A: " . $newValue->phaseA . "В, фаза B: " . $newValue->phaseB . "В, фаза C: " . $newValue->phaseC . "В, на " . (new \DateTime($newValue->last))->add(new \DateInterval("PT4H"))->format('Y-m-d H:i:s');
+          break;
+        case 4:
+          $text = $heater->title . " не отвечает. Последнее состояние: " . ($newValue->onoff ? "вкл." : "выкл.") . " фаза A: " . $newValue->phaseA . "В, фаза B: " . $newValue->phaseB . "В, фаза C: " . $newValue->phaseC . "В, на " . (new \DateTime($newValue->last))->add(new \DateInterval("PT4H"))->format('Y-m-d H:i:s');
+          break;
+      }
       $telegram = new \Telegram\Bot\Api(config('telegram.bots.mybot.token'));
       $users = User::where('telegram_chat_id', '!=', null)->where('send_heater_notice', true)->get();
-      $text = $heater->title . " состояние: " . ($newValue->onoff ? "вкл." : "выкл.") . " фаза A: " . $newValue->phaseA . " фаза B: " . $newValue->phaseB . " фаза C: " . $newValue->phaseC;
       foreach ($users as $user) {
         $telegram->setAsyncRequest(true)->sendMessage(['chat_id' => $user->telegram_chat_id, 'text' => $text]);
       }
