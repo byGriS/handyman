@@ -47,7 +47,7 @@ class OwenCloudController extends Controller {
         $sendNotice = 2;
     }
     if (
-      $newValue->onoff && $heater->state != "error" &&
+      $newValue->onoff &&
       (
         abs($newValue->phaseA - $newValue->phaseB) > ($newValue->phaseA * $newValue->phaseB / 2 * 0.2) ||
         abs($newValue->phaseB - $newValue->phaseC) > ($newValue->phaseB * $newValue->phaseC / 2 * 0.2) ||
@@ -57,28 +57,30 @@ class OwenCloudController extends Controller {
         $newValue->phaseC < 10
       )
     ) {
-      $sendNotice = 3;
-      $heater->state = "error";
-      $heater->save();
+      if ($heater->state != "error") {
+        $sendNotice = 3;
+        $heater->state = "error";
+        $heater->save();
+      }
     } else {
       if ($heater->state == "error") {
         $heater->state = "ok";
         $heater->save();
       }
     }
-
     $diffMinutes = round(abs(strtotime("now") - strtotime($newValue->last)) / 60, 2);
-    if ($diffMinutes > 10 && $heater->state != "timeout") {
-      $sendNotice = 4;
-      $heater->state = "timeout";
-      $heater->save();
-    }else{
+    if ($diffMinutes > 10) {
+      if ($heater->state != "timeout") {
+        $sendNotice = 4;
+        $heater->state = "timeout";
+        $heater->save();
+      }
+    } else {
       if ($heater->state == "timeout") {
         $heater->state = "ok";
         $heater->save();
       }
     }
-
     if ($sendNotice > 0) {
       switch ($sendNotice) {
         case 1:
